@@ -22,6 +22,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startKoin {
+            androidLogger()
+            androidContext(this@MainActivity)
+            modules(Module.appModule)
+        }
         setContentView(R.layout.activity_main)
     }
+    val vto = constraintLayout.viewTreeObserver
+
+    vto.addOnGlobalLayoutListener(
+    object : OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+
+            constraintLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+            val layoutHeight: Int = constraintLayout.measuredHeight
+            val layoutWidth: Int = constraintLayout.measuredWidth
+
+            coordinateMapper.layoutHeight = layoutHeight
+            coordinateMapper.layoutWidth = layoutWidth
+
+            boardRenderer.draw(board, constraintLayout)
+
+        }
+    }
+    )
+
+}
 }
