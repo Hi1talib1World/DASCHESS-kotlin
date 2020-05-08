@@ -2,12 +2,8 @@ package com.denzo.daschess.view.piece
 
 
 import android.content.Context
-import android.support.constraint.ConstraintLayout
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.alltimeslucky.cheekychess.R
-import com.alltimeslucky.cheekychess.model.piece.*
-import com.alltimeslucky.cheekychess.view.CoordinateMapper
 import com.denzo.daschess.R
 import com.denzo.daschess.model.piece.*
 import com.denzo.daschess.view.CoordinateMapper
