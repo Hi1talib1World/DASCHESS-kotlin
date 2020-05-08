@@ -9,10 +9,7 @@ import com.alltimeslucky.cheekychess.R
 import com.alltimeslucky.cheekychess.model.piece.*
 import com.alltimeslucky.cheekychess.view.CoordinateMapper
 import com.denzo.daschess.R
-import com.denzo.daschess.model.piece.Colour
-import com.denzo.daschess.model.piece.Knight
-import com.denzo.daschess.model.piece.Piece
-import com.denzo.daschess.model.piece.Rook
+import com.denzo.daschess.model.piece.*
 import com.denzo.daschess.view.CoordinateMapper
 
 
