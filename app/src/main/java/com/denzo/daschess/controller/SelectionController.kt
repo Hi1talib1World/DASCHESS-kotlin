@@ -1,6 +1,6 @@
 package com.denzo.daschess.controller
 
-import android.text.Selection
+import com.denzo.daschess.model.selection.Selection
 import com.denzo.daschess.view.CoordinateMapper
 
 
