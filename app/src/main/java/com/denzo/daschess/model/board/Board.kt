@@ -1,6 +1,6 @@
 package com.denzo.daschess.model.board
 
-import com.alltimeslucky.cheekychess.model.piece.Piece
+import com.denzo.daschess.model.piece.Piece
 
 interface Board {
 
