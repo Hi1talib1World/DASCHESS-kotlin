@@ -3,21 +3,19 @@ package com.denzo.daschess
 import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
+import android.support.constraint.ConstraintLayout
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import com.alltimeslucky.cheekychess.controller.SelectionController
-import com.alltimeslucky.cheekychess.koin.Module
-import com.alltimeslucky.cheekychess.model.board.Board
-import com.alltimeslucky.cheekychess.view.CoordinateMapper
-import com.alltimeslucky.cheekychess.view.board.BoardRenderer
+import com.denzo.daschess.controller.SelectionController
+import com.denzo.daschess.koin.Module
+import com.denzo.daschess.model.board.Board
+import com.denzo.daschess.view.CoordinateMapper
+import com.denzo.daschess.view.board.BoardRenderer
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import android.os.Bundle
-import com.denzo.daschess.koin.Module
+
 
 class MainActivity : AppCompatActivity() {
 
