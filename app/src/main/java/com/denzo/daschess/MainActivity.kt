@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MotionEvent
-import android.support.constraint.ConstraintLayout
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.denzo.daschess.controller.SelectionController
 import com.denzo.daschess.koin.Module
