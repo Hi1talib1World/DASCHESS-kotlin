@@ -20,23 +20,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-import com.thirtydegreesray.openhub.common.GlideApp;
-import com.thirtydegreesray.openhub.inject.component.AppComponent;
-import com.thirtydegreesray.openhub.inject.component.DaggerActivityComponent;
-import com.thirtydegreesray.openhub.inject.module.ActivityModule;
+import com.denzo.daschess.ui.GlideApp;
+import com.denzo.daschess.ui.AppComponent;
+import com.denzo.daschess.ui.DaggerActivityComponent;
+import com.denzo.daschess.ui.ActivityModule;
 import com.denzo.daschess.ui.IProfileContract;
-import com.thirtydegreesray.openhub.mvp.model.User;
+import com.denzo.daschess.ui.User;
 import com.denzo.daschess.ui.ProfilePresenter;
-import com.thirtydegreesray.openhub.ui.activity.base.PagerActivity;
-import com.thirtydegreesray.openhub.ui.adapter.base.FragmentPagerModel;
-import com.thirtydegreesray.openhub.ui.fragment.ActivityFragment;
+import com.denzo.daschess.ui.PagerActivity;
+import com.denzo.daschess.ui.FragmentPagerModel;
+import com.denzo.daschess.ui.ActivityFragment;
 import com.denzo.daschess.ui.ProfileInfoFragment;
-import com.thirtydegreesray.openhub.ui.fragment.RepositoriesFragment;
+import com.denzo.daschess.ui.RepositoriesFragment;
 import com.thirtydegreesray.openhub.util.AppOpener;
-import com.thirtydegreesray.openhub.util.AppUtils;
-import com.thirtydegreesray.openhub.util.BundleHelper;
-import com.thirtydegreesray.openhub.util.PrefUtils;
-import com.thirtydegreesray.openhub.util.StringUtils;
+import com.denzo.daschess.ui.AppUtils;
+import com.denzo.daschess.ui.BundleHelper;
+import com.denzo.daschess.ui.PrefUtils;
+import com.denzo.daschess.ui.StringUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
