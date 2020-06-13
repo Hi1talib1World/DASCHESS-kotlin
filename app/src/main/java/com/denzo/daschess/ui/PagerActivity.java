@@ -29,24 +29,24 @@ protected void initActivity() {
         super.initActivity();
         }
 
-@Override
-protected void initView(Bundle savedInstanceState) {
-        super.initView(savedInstanceState);
-        viewPager.addOnPageChangeListener(this);
-        tabLayout.addOnTabSelectedListener(this);
-        }
+    @Override
+    protected void initView(Bundle savedInstanceState) {
+            super.initView(savedInstanceState);
+            viewPager.addOnPageChangeListener(this);
+            tabLayout.addOnTabSelectedListener(this);
+            }
 
-@Override
-@Deprecated
-public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Fragment fragment = pagerAdapter.getCurFragment();
-        if(fragment != null
-        && fragment instanceof IFragmentKeyListener
-        && ((IFragmentKeyListener)fragment).onKeyDown(keyCode, event)){
-        return true;
-        }
-        return onMainKeyDown(keyCode, event);
-        }
+    @Override
+    @Deprecated
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+            Fragment fragment = pagerAdapter.getCurFragment();
+            if(fragment != null
+            && fragment instanceof IFragmentKeyListener
+            && ((IFragmentKeyListener)fragment).onKeyDown(keyCode, event)){
+            return true;
+            }
+            return onMainKeyDown(keyCode, event);
+            }
 
 @Override
 protected void onToolbarDoubleClick() {
