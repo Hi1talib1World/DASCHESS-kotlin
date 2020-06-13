@@ -14,24 +14,24 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzo.daschess.R;
-import com.thirtydegreesray.openhub.AppData;
+import com.denzo.daschess.ui.AppData;
 
-import com.thirtydegreesray.openhub.inject.component.AppComponent;
-import com.thirtydegreesray.openhub.inject.component.DaggerFragmentComponent;
-import com.thirtydegreesray.openhub.inject.module.FragmentModule;
-import com.thirtydegreesray.openhub.mvp.contract.IProfileInfoContract;
-import com.thirtydegreesray.openhub.model.User;
-import com.thirtydegreesray.openhub.mvp.presenter.ProfileInfoPresenter;
-import com.thirtydegreesray.openhub.ui.activity.ProfileActivity;
-import com.thirtydegreesray.openhub.ui.activity.RepoListActivity;
-import com.thirtydegreesray.openhub.ui.activity.UserListActivity;
-import com.thirtydegreesray.openhub.ui.adapter.UsersAdapter;
-import com.thirtydegreesray.openhub.ui.adapter.base.BaseViewHolder;
-import com.thirtydegreesray.openhub.ui.fragment.base.BaseFragment;
-import com.thirtydegreesray.openhub.util.AppOpener;
-import com.thirtydegreesray.openhub.util.BundleHelper;
-import com.thirtydegreesray.openhub.util.StringUtils;
-import com.thirtydegreesray.openhub.util.ViewUtils;
+import com.denzo.daschess.ui.AppComponent;
+import com.denzo.daschess.ui.DaggerFragmentComponent;
+import com.denzo.daschess.ui.FragmentModule;
+import com.denzo.daschess.ui.IProfileInfoContract;
+import com.denzo.daschess.ui.User;
+import com.denzo.daschess.ui.ProfileInfoPresenter;
+import com.denzo.daschess.ui.ProfileActivity;
+import com.denzo.daschess.ui.RepoListActivity;
+import com.denzo.daschess.ui.UserListActivity;
+import com.denzo.daschess.ui.UsersAdapter;
+import com.denzo.daschess.ui.BaseViewHolder;
+import com.denzo.daschess.ui.BaseFragment;
+import com.denzo.daschess.ui.AppOpener;
+import com.denzo.daschess.ui.BundleHelper;
+import com.denzo.daschess.ui.util.StringUtils;
+import com.denzo.daschess.ui.ViewUtils;
 
 import java.util.ArrayList;
 
