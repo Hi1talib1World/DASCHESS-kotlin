@@ -2,21 +2,25 @@ package com.denzo.daschess.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+
+
+
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.denzo.daschess.R;
 import com.thirtydegreesray.openhub.AppData;
-import com.thirtydegreesray.openhub.R;
+
 import com.thirtydegreesray.openhub.inject.component.AppComponent;
 import com.thirtydegreesray.openhub.inject.component.DaggerFragmentComponent;
 import com.thirtydegreesray.openhub.inject.module.FragmentModule;
 import com.thirtydegreesray.openhub.mvp.contract.IProfileInfoContract;
-import com.thirtydegreesray.openhub.mvp.model.User;
+import com.thirtydegreesray.openhub.model.User;
 import com.thirtydegreesray.openhub.mvp.presenter.ProfileInfoPresenter;
 import com.thirtydegreesray.openhub.ui.activity.ProfileActivity;
 import com.thirtydegreesray.openhub.ui.activity.RepoListActivity;
@@ -35,6 +39,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Created by ThirtyDegreesRay on 2017/8/23 14:39:19
@@ -59,8 +65,10 @@ public class ProfileInfoFragment extends BaseFragment<ProfileInfoPresenter>
     @BindView(R.id.repos_num_text) TextView reposNumText;
     @BindView(R.id.gists_num_text) TextView gistsNumText;
 
-    @BindView(R.id.orgs_lay) CardView orgsLay;
-    @BindView(R.id.orgs_recycler_view) RecyclerView orgsRecyclerView;
+    @BindView(R.id.orgs_lay)
+    CardView orgsLay;
+    @BindView(R.id.orgs_recycler_view)
+    RecyclerView orgsRecyclerView;
 
     @Inject UsersAdapter orgsAdapter;
 
