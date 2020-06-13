@@ -10,6 +10,10 @@ import com.denzo.daschess.R;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+
 public class PagerActivity extends <P BasePresenter> extends BaseDrawerActivity<P>
         implements IBaseContract.View,
                 ViewPager.OnPageChangeListener,
