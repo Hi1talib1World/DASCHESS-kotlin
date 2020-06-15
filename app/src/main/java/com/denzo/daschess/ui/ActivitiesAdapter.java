@@ -290,7 +290,7 @@ public class ActivitiesAdapter extends BaseAdapter<ActivitiesAdapter.ViewHolder,
         }
 
         private String getIssueEventStr(String action){
-            EventPayload.IssueEventActionType actionType = EventPayload.IssueEventActionType.valueOf(action);
+            AlwaysOnHotwordDetector.EventPayload.IssueEventActionType actionType = AlwaysOnHotwordDetector.EventPayload.IssueEventActionType.valueOf(action);
             switch (actionType){
                 case assigned:
                     return getString(R.string.assigned_issue_at);
