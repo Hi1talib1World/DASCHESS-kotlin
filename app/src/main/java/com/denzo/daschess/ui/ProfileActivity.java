@@ -32,7 +32,7 @@ import com.denzo.daschess.ui.FragmentPagerModel;
 import com.denzo.daschess.ui.ActivityFragment;
 import com.denzo.daschess.ui.ProfileInfoFragment;
 import com.denzo.daschess.ui.RepositoriesFragment;
-import com.thirtydegreesray.openhub.util.AppOpener;
+import com.denzo.daschess.ui.util.AppOpener;
 import com.denzo.daschess.ui.AppUtils;
 import com.denzo.daschess.ui.BundleHelper;
 import com.denzo.daschess.ui.PrefUtils;
