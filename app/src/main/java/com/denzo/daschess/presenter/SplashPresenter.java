@@ -5,6 +5,7 @@ import android.database.Observable;
 
 import androidx.annotation.NonNull;
 
+import com.denzo.daschess.dao.AuthUser;
 import com.denzo.daschess.ui.User;
 
 import java.util.Date;
