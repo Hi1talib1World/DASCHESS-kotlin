@@ -7,6 +7,7 @@ import android.database.Observable;
 import androidx.annotation.NonNull;
 
 import com.denzo.daschess.contract.IActivityContract;
+import com.denzo.daschess.dao.DaoSession;
 import com.denzo.daschess.model.ActivityRedirectionModel;
 import com.denzo.daschess.ui.ActivityFragment;
 import com.thirtydegreesray.dataautoaccess.annotation.AutoAccess;
