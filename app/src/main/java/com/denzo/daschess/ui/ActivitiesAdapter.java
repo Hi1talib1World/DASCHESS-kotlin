@@ -3,6 +3,7 @@ package com.denzo.daschess.ui;
 
 import android.app.Activity;
 import android.app.usage.UsageEvents;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.service.voice.AlwaysOnHotwordDetector;
 import android.text.Spannable;
@@ -19,10 +20,12 @@ import com.denzo.daschess.R;
 
 import java.util.regex.Matcher;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class ActivitiesAdapter extends BaseAdapter<ActivitiesAdapter.ViewHolder, Event> {
+public class ActivitiesAdapter extends BaseAdapter<ActivitiesAdapter.ViewHolder, UsageEvents.Event> {
 
     @Inject
     public ActivitiesAdapter(Context context, BaseFragment fragment) {
@@ -42,7 +45,7 @@ public class ActivitiesAdapter extends BaseAdapter<ActivitiesAdapter.ViewHolder,
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-        Event model = data.get(position);
+        UsageEvents.Event model = data.get(position);
         GlideApp.with(fragment)
                 .load(model.getActor().getAvatarUrl())
                 .onlyRetrieveFromCache(!PrefUtils.isLoadImageEnable())
@@ -276,7 +279,7 @@ public class ActivitiesAdapter extends BaseAdapter<ActivitiesAdapter.ViewHolder,
         }
 
         private String getMemberEventStr(String action){
-            EventPayload.MemberEventActionType actionType = EventPayload.MemberEventActionType.valueOf(action);
+            AlwaysOnHotwordDetector.EventPayload.MemberEventActionType actionType = AlwaysOnHotwordDetector.EventPayload.MemberEventActionType.valueOf(action);
             switch (actionType){
                 case added:
                     return getString(R.string.added_member_to);
