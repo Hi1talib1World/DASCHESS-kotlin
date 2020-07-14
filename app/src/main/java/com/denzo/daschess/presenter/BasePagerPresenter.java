@@ -1,6 +1,7 @@
 package com.denzo.daschess.presenter;
 
 
+import com.denzo.daschess.dao.DaoSession;
 import com.denzo.daschess.ui.IBasePagerContract;
 
 public abstract class BasePagerPresenter<V extends IBasePagerContract.View> extends BasePresenter<V>
