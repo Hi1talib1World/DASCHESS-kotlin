@@ -1,5 +1,6 @@
 package com.denzo.daschess.ui;
 
+import android.app.usage.UsageEvents;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -65,7 +66,7 @@ public class ActivityFragment  extends ListFragment<ActivityPresenter, Activitie
     @Override
     public void onItemClick(int position, @NonNull View view) {
         super.onItemClick(position, view);
-        Event event = adapter.getData().get(position);
+        UsageEvents.Event event = adapter.getData().get(position);
         if (event.getRepo() == null) {
             ProfileActivity.show(getActivity(), null, event.getActor().getLogin(), event.getActor().getAvatarUrl());
             return;
