@@ -3,6 +3,8 @@ package com.denzo.daschess.ui;
 import android.os.Handler;
 import android.os.Trace;
 
+import com.denzo.daschess.presenter.BasePresenter;
+
 import java.util.Date;
 import java.util.UUID;
 
