@@ -1,7 +1,10 @@
 package com.denzo.daschess.dao;
 
 import android.database.Cursor;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteStatement;
 
+import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 
 public class LocalRepoDao extends AbstractDao<LocalRepo, Long> {
