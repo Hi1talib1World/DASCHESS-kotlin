@@ -3,9 +3,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.thirtydegreesray.openhub.dao.BookMarkUser;
-import com.thirtydegreesray.openhub.dao.LocalUser;
-import com.thirtydegreesray.openhub.dao.TraceUser;
 
 import java.util.Date;
 
