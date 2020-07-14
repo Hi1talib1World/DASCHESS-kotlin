@@ -2,9 +2,11 @@ package com.denzo.daschess.presenter;
 
 
 import android.app.usage.UsageEvents;
+import android.database.Observable;
 
 import androidx.annotation.NonNull;
 
+import com.denzo.daschess.contract.IActivityContract;
 import com.denzo.daschess.model.ActivityRedirectionModel;
 import com.denzo.daschess.ui.ActivityFragment;
 import com.thirtydegreesray.dataautoaccess.annotation.AutoAccess;
@@ -12,6 +14,8 @@ import com.thirtydegreesray.dataautoaccess.annotation.AutoAccess;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+
+import retrofit2.Response;
 
 public class ActivityPresenter extends BasePagerPresenter<IActivityContract.View>
         implements IActivityContract.Presenter{
@@ -47,7 +51,7 @@ public class ActivityPresenter extends BasePagerPresenter<IActivityContract.View
     public void loadEvents(final boolean isReload, final int page) {
         mView.showLoading();
         final boolean readCacheFirst = !isReload && page == 1;
-        HttpObserver<ArrayList<Event>> httpObserver = new HttpObserver<ArrayList<Event>>() {
+        HttpObserver<ArrayList<UsageEvents.Event>> httpObserver = new HttpObserver<ArrayList<UsageEvents.Event>>() {
             @Override
             public void onError(Throwable error) {
                 mView.hideLoading();
@@ -116,7 +120,7 @@ public class ActivityPresenter extends BasePagerPresenter<IActivityContract.View
         return list;
     }
 
-    private Observable<Response<ArrayList<Event>>> getObservable(boolean forceNetWork, int page){
+    private Observable<Response<ArrayList<UsageEvents.Event>>> getObservable(boolean forceNetWork, int page){
         if(type.equals(ActivityFragment.ActivityType.News)){
             return getUserService().getNewsEvent(forceNetWork, user, page);
         } else if(type.equals(ActivityFragment.ActivityType.User)){
