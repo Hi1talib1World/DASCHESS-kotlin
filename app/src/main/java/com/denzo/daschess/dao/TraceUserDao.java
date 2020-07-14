@@ -1,7 +1,9 @@
 package com.denzo.daschess.dao;
 
+import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.internal.DaoConfig;
 
 public class TraceUserDao extends AbstractDao<TraceUser, String> {
 
