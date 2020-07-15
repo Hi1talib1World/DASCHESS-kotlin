@@ -3,6 +3,7 @@ package com.denzo.daschess.http;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.solver.Cache;
 
 import java.io.IOException;
@@ -22,6 +23,8 @@ import okhttp3.Request;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 public enum  AppRetrofit {
     INSTANCE;
@@ -130,14 +133,11 @@ public enum  AppRetrofit {
 //            String serverCacheControl = originalResponse.header("Cache-Control");
             String requestCacheControl = request.cacheControl().toString();
 
-//            //若服务器端有缓存策略，则无需修改
 //            if (StringUtil.isBlank(serverCacheControl)) {
 //                return originalResponse;
 //            }
-//            //不设置缓存策略
 //            else
 
-            //有forceNetWork时，强制更改缓存策略
             String forceNetWork = request.header("forceNetWork");
             if(!StringUtils.isBlank(forceNetWork)){
                 requestCacheControl = getCacheString();
@@ -146,7 +146,6 @@ public enum  AppRetrofit {
             if (StringUtils.isBlank(requestCacheControl)) {
                 return originalResponse;
             }
-            //设置缓存策略
             else {
                 Response res = originalResponse.newBuilder()
                         .header("Cache-Control", requestCacheControl)
