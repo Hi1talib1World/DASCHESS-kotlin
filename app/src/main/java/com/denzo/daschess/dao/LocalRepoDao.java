@@ -4,7 +4,10 @@ import android.database.Cursor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
+import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.database.DatabaseStatement;
 import org.greenrobot.greendao.internal.DaoConfig;
 
 public class LocalRepoDao extends AbstractDao<LocalRepo, Long> {
