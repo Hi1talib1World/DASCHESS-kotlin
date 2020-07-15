@@ -8,9 +8,15 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 
+import com.denzo.daschess.inject.component.AppComponent;
+import com.denzo.daschess.inject.module.AppModule;
 import com.denzo.daschess.ui.AboutActivity;
 import com.denzo.daschess.ui.LoginActivity;
+import com.denzo.daschess.util.AppUtils;
+import com.denzo.daschess.util.NetHelper;
+import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 
 import dagger.internal.Beta;
 
