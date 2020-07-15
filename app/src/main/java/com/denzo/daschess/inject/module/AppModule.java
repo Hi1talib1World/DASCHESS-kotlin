@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.denzo.daschess.AppApplication;
 import com.denzo.daschess.AppConfig;
 import com.denzo.daschess.dao.DBOpenHelper;
+import com.denzo.daschess.dao.DaoMaster;
 import com.denzo.daschess.dao.DaoSession;
 
 import javax.inject.Singleton;
