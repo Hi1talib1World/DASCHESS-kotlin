@@ -4,11 +4,16 @@ package com.denzo.daschess.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Trace;
 
 import org.greenrobot.greendao.database.Database;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import javax.inject.Scope;
