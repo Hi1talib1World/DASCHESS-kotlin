@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.solver.Cache;
 
+import com.denzo.daschess.AppApplication;
 import com.denzo.daschess.AppConfig;
 
 import java.io.IOException;
