@@ -15,6 +15,6 @@ public interface AppComponent {
 
     AppApplication getApplication();
 
-    ession getDaoSession();
+    DaoSession getDaoSession();
 
 }
