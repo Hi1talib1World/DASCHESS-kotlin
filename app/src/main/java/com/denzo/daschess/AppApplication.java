@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 
+import com.denzo.daschess.ui.AboutActivity;
 import com.denzo.daschess.ui.LoginActivity;
 import com.orhanobut.logger.Logger;
 
