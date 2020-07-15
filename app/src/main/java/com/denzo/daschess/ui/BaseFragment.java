@@ -18,6 +18,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.denzo.daschess.AppApplication;
 import com.denzo.daschess.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.thirtydegreesray.dataautoaccess.DataAutoAccess;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import es.dmoral.toasty.Toasty;
 
 public abstract class BaseFragment<P extends IBaseContract.Presenter>
         extends Fragment implements IBaseContract.View {
