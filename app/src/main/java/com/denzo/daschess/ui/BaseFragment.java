@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.denzo.daschess.AppApplication;
 import com.denzo.daschess.R;
+import com.denzo.daschess.util.AppUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.thirtydegreesray.dataautoaccess.DataAutoAccess;
 
