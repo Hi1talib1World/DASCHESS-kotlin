@@ -1,5 +1,7 @@
 package com.denzo.daschess;
 
+import com.denzo.daschess.util.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 
