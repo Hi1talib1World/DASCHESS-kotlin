@@ -10,7 +10,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.denzo.daschess.R;
+import com.denzo.daschess.contract.IActivityContract;
+import com.denzo.daschess.presenter.ActivityPresenter;
 
+import java.util.ArrayList;
+
+import static com.denzo.daschess.dao.LocalRepoDao.Properties.Fork;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Commit;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.CommitCompare;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Commits;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Issue;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Issues;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Release;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Releases;
+import static com.denzo.daschess.model.ActivityRedirectionModel.Type.Repo;
 import static java.security.AccessController.getContext;
 
 public class ActivityFragment  extends ListFragment<ActivityPresenter, ActivitiesAdapter>
@@ -199,7 +212,7 @@ public class ActivityFragment  extends ListFragment<ActivityPresenter, Activitie
     }
 
     @Override
-    public void showEvents(ArrayList<Event> events) {
+    public void showEvents(ArrayList<UsageEvents.Event> events) {
         adapter.setData(events);
         postNotifyDataSetChanged();
         if(getCurPage() == 2 && PrefUtils.isActivityLongClickTipAble()){
