@@ -1,6 +1,7 @@
 package com.denzo.daschess.ui;
 
 import android.app.usage.UsageEvents;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -11,7 +12,9 @@ import androidx.annotation.Nullable;
 
 import com.denzo.daschess.R;
 import com.denzo.daschess.contract.IActivityContract;
+import com.denzo.daschess.model.ActivityRedirectionModel;
 import com.denzo.daschess.presenter.ActivityPresenter;
+import com.denzo.daschess.util.PrefUtils;
 
 import java.util.ArrayList;
 
@@ -132,7 +135,7 @@ public class ActivityFragment  extends ListFragment<ActivityPresenter, Activitie
         menu.setHeaderTitle(R.string.go_to);
         ContextMenuRecyclerView.RecyclerViewContextMenuInfo info =
                 (ContextMenuRecyclerView.RecyclerViewContextMenuInfo) menuInfo;
-        Event event = adapter.getData().get(info.getPosition());
+        UsageEvents.Event event = adapter.getData().get(info.getPosition());
         ArrayList<ActivityRedirectionModel> redirectionModels = mPresenter.getRedirectionList(event);
         for (ActivityRedirectionModel model : redirectionModels) {
             addRedirectionMenuItem(menu, model);
