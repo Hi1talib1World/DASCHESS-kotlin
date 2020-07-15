@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,7 +60,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import java.util.ArrayList;
 
 public abstract class BasePresenter<V extends IBaseContract.View> implements IBaseContract.Presenter<V> {
 
