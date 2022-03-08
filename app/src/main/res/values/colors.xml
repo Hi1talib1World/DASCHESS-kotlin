@@ -8,9 +8,11 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="black_overlay">#66000000</color>
-    <color name="black_light">#212121</color>
 
+    <color name="black_light">#212121</color>
+    <color name="brightSquare">#cebfa0</color>
+    <color name="darkSquare">#a8947b</color>
+    <color name="selectionColor">#7f6748</color>
     <color name="material_amber_100">#FFECB3</color>
     <color name="material_amber_200">#FFE082</color>
     <color name="material_amber_300">#FFD54F</color>
