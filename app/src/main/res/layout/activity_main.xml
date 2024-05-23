@@ -15,4 +15,4 @@
     custom:layout_constraintStart_toStartOf="parent"
     custom:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
