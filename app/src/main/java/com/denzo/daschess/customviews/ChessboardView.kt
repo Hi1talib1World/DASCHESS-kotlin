@@ -154,7 +154,7 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
             if (hostContext is AppCompatActivity) {
                 return hostContext
             }
-            hostContext = (context as ContextWrapper).baseContext
+            hostContext = hostContext.baseContext
         }
         return null
     }
