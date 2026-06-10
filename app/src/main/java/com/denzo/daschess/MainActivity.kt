@@ -1,94 +1,69 @@
 package com.denzo.daschess
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.MotionEvent
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.menu.BaseMenuPresenter
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import com.denzo.daschess.customviews.ChessboardView
-import com.google.android.material.snackbar.Snackbar
-import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity(), Presenter.ChessboardInterface {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var chessboard: ChessboardView
-    private lateinit var presenter: Presenter
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId){
-            R.id.cancel_move -> {
-                presenter.cancelMove()
-                true
+        bottomNavigation = findViewById(R.id.bottom_navigation)
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_play -> {
+                    loadFragment(HomeFragment())
+                    true
+                }
+                R.id.nav_history -> {
+                    loadFragment(HistoryFragment())
+                    true
+                }
+                R.id.nav_puzzles -> {
+                    loadFragment(PuzzlesFragment())
+                    true
+                }
+                R.id.nav_profile -> {
+                    loadFragment(ProfileFragment())
+                    true
+                }
+                else -> false
             }
-            R.id.restart_game -> {
-                presenter.restartGame()
-                true
-            }
+        }
 
-            else -> super.onOptionsItemSelected(item)
+        // Default fragment
+        if (savedInstanceState == null) {
+            loadFragment(HomeFragment())
         }
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        presenter = Presenter(this)
-        chessboard = findViewById(R.id.chessboard)
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    fun startNewGame() {
+        bottomNavigation.selectedItemId = R.id.nav_play // Or we could have a separate "Game" screen
+        // For now, let's load GameFragment into the container
+        loadFragment(GameFragment())
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        sendInputToPresenter(chessboard.currentChosenPos, chessboard.previousChosenPos)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (currentFragment is GameFragment) {
+            val chessboard = currentFragment.view?.findViewById<ChessboardView>(R.id.chessboard)
+            if (chessboard != null) {
+                currentFragment.sendInputToPresenter(chessboard.currentChosenPos, chessboard.previousChosenPos)
+            }
+        }
         return super.onTouchEvent(event)
-    }
-
-    override fun sendInputToPresenter(currentPosition: Pair<Int, Int>?, previousPosition: Pair<Int, Int>?) {
-        presenter.handleInput(currentPosition, previousPosition)
-    }
-
-    override fun displayAvailableMoves(movesCoordinates: List<Pair<Int, Int>>) {
-        chessboard.displaySelection()
-        chessboard.displayAvailableMoves(movesCoordinates)
-    }
-
-    override fun clearSelection() {
-        chessboard.clearSelection()
-    }
-
-    override fun redrawPieces(
-        whitePieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
-        blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>) {
-        chessboard.redrawPieces(whitePieces, blackPieces)
-        chessboard.clearSelection()
-    }
-
-    override fun displayWinner(player: Int) {
-        val winnerColorString = if (player == -1) "White player" else "Black player"
-        Snackbar.make(findViewById(R.id.chessboard), "$winnerColorString wins!", Snackbar.LENGTH_LONG).show()
-    }
-
-    override fun displayCheck(player: Int) {
-        val kingInCheckColor = if (player == -1) "White" else "Black"
-        Snackbar.make(findViewById(R.id.chessboard), "$kingInCheckColor king in check!", Snackbar.LENGTH_LONG).show()
     }
 }
