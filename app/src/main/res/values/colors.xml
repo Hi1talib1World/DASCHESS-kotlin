@@ -10,9 +10,9 @@
 
 
     <color name="black_light">#212121</color>
-    <color name="brightSquare">#cebfa0</color>
-    <color name="darkSquare">#a8947b</color>
-    <color name="selectionColor">#7f6748</color>
+    <color name="brightSquare">#FFFFFF</color>
+    <color name="darkSquare">#DCE2F0</color>
+    <color name="selectionColor">#4D64E1</color>
     <color name="material_amber_100">#FFECB3</color>
     <color name="material_amber_200">#FFE082</color>
     <color name="material_amber_300">#FFD54F</color>
@@ -270,5 +270,18 @@
     <color name="commit_file_removed_color">#cb2431</color>
     <color name="commit_file_renamed_color">#6a737d</color>
     <color name="commit_file_modified_color">#dbab09</color>
+
+    <!-- New UI Colors -->
+    <color name="chess_bg_light">#F5F7FA</color>
+    <color name="chess_primary">#0A1245</color>
+    <color name="chess_secondary">#DCE2F0</color>
+    <color name="chess_accent">#4D64E1</color>
+    <color name="chess_text_primary">#0A1245</color>
+    <color name="chess_text_secondary">#6B7280</color>
+    <color name="chess_card_bg">#FFFFFF</color>
+    <color name="chess_button_text">#FFFFFF</color>
+    <color name="chess_win">#10B981</color>
+    <color name="chess_loss">#EF4444</color>
+    <color name="chess_draw">#6B7280</color>
 
 </resources>
