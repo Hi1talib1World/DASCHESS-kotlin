@@ -37,6 +37,9 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface {
         super.onViewCreated(view, savedInstanceState)
 
         presenter = Presenter(this)
+        val isAiEnabled = arguments?.getBoolean("isAiEnabled") ?: false
+        presenter.restartGame(isAiEnabled)
+
         chessboard = view.findViewById(R.id.chessboard)
         whiteTimerText = view.findViewById(R.id.player_timer)
         blackTimerText = view.findViewById(R.id.opponent_timer)
