@@ -1,5 +1,7 @@
 package com.denzo.daschess
 
+import kotlin.math.abs
+
 class Game {
     /*
     * Class that implements the game itself, stores it's instances of game objects,
@@ -19,6 +21,7 @@ class Game {
     var isEnd = 0
     val isCheck = mutableMapOf<Int, Boolean>(-1 to false, 1 to false)
     var currentPlayerColor = -1  // first turn is white's turn
+    var isAiEnabled = false
 
     // Variables to store values of positions of the last move to implement Cancellation of that move
     private var lastMoveCurrentPos: Pair<Int, Int>? = null
@@ -30,14 +33,13 @@ class Game {
 
     fun cancelMove() {
         if (lastMovePreviousPos != null && lastMoveCurrentPos != null) {
-            println("previoues pos: $lastMovePreviousPos, current pos: $lastMoveCurrentPos")
             // Change player back
             currentPlayerColor *= -1
             gameUtils.cancelMove(players,
                 currentPlayerColor,
                 board,
-                lastMoveCurrentPos as Pair,
-                lastMovePreviousPos as Pair,
+                lastMoveCurrentPos!!,
+                lastMovePreviousPos!!,
                 capturedPiecesQueue)
 
             gameUtils.updateAllAvailableMoves(players, board)
@@ -49,20 +51,29 @@ class Game {
     }
 
     fun makeMove(piecePos: Pair<Int, Int>, movePos: Pair<Int, Int>) {
+        val player = players[currentPlayerColor]!!
+        val opponent = players[-1 * currentPlayerColor]!!
+        val pieceNum = board[piecePos.first][piecePos.second]
+        val pieceName = player.pieces[pieceNum]?.first
+
+        // Basic Check: Cannot castle while in check
+        if (pieceName == "King" && abs(piecePos.second - movePos.second) == 2) {
+            if (gameUtils.isCheck(piecePos, opponent)) {
+                return // Invalid move: cannot castle while in check
+            }
+            // Cannot castle through a square under attack
+            val passedCol = if (movePos.second == 5) 4 else 2
+            if (gameUtils.isCheck(Pair(piecePos.first, passedCol), opponent)) {
+                return // Invalid move: cannot castle through attack
+            }
+        }
+
         gameUtils.makeMove(players, currentPlayerColor, board, piecePos, movePos, capturedPiecesQueue)
         gameUtils.updateAllAvailableMoves(players, board)
-
-        for (p in players[-1*currentPlayerColor]!!.availableMoves) {
-            println("$p")
-        }
 
         // Check if check for both players
         isCheck[currentPlayerColor] = gameUtils.isCheck(players[currentPlayerColor]!!.pieces[currentPlayerColor]!!.second, players[-1*currentPlayerColor] as Player)
         isCheck[-1*currentPlayerColor] = gameUtils.isCheck(players[-1*currentPlayerColor]!!.pieces[-1*currentPlayerColor]!!.second, players[currentPlayerColor] as Player)
-
-        for (k in isCheck) {
-            println("$k")
-        }
 
         // Check if player made invalid move and open his king for opponent's attack
         if (isCheck[currentPlayerColor] == true) {
