@@ -21,6 +21,7 @@ class Player(var color: Int) {
     )
 
     var availableMoves = mutableMapOf<Int, List<Pair<Int, Int>>>()
+    val movedPieces = mutableSetOf<Int>()
 
     init {
         for (i in 0..7) {
@@ -51,13 +52,37 @@ class Player(var color: Int) {
 
         fun fKing(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             val positions = mutableListOf<Pair<Int, Int>>()
-            val rows = ((pos.first - 1)..(pos.first + 1)).toList().filter{(0..7).contains(it)}
-            val cols = ((pos.second - 1)..(pos.second + 1)).toList().filter{(0..7).contains(it)}
+            val rows = ((pos.first - 1)..(pos.first + 1)).toList().filter{(checkIfOnBoard(Pair(it, pos.second)))}
+            val cols = ((pos.second - 1)..(pos.second + 1)).toList().filter{(checkIfOnBoard(Pair(pos.first, it)))}
 
             rows.forEach{row ->
                 cols.forEach{col ->
-                    if (board[row][col] == 0) positions += Pair(row, col)
+                    if (Pair(row, col) != pos) {
+                        val fig = board[row][col]
+                        if (fig == 0 || fig.sign == -color) {
+                            positions += Pair(row, col)
+                        }
+                    }
                 }}
+
+            // Castling logic (Simplified: checks path and movement, "under attack" checked in makeMove)
+            val kingNum = 1 * color
+            if (!movedPieces.contains(kingNum)) {
+                // Kingside Castling (towards Rook at col 7)
+                val rookKingsideNum = 4 * color
+                if (!movedPieces.contains(rookKingsideNum)) {
+                    if (board[initialRowPos][4] == 0 && board[initialRowPos][5] == 0 && board[initialRowPos][6] == 0) {
+                        positions += Pair(initialRowPos, 5) // King moves 2 squares
+                    }
+                }
+                // Queenside Castling (towards Rook at col 0)
+                val rookQueensideNum = 3 * color
+                if (!movedPieces.contains(rookQueensideNum)) {
+                    if (board[initialRowPos][1] == 0 && board[initialRowPos][2] == 0) {
+                        positions += Pair(initialRowPos, 1) // King moves 2 squares
+                    }
+                }
+            }
             return positions
         }
 
