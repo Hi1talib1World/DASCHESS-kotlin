@@ -50,10 +50,13 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    fun startNewGame() {
+    fun startNewGame(isAiEnabled: Boolean = false) {
         bottomNavigation.selectedItemId = R.id.nav_play // Or we could have a separate "Game" screen
         // For now, let's load GameFragment into the container
-        loadFragment(GameFragment())
+        val fragment = GameFragment()
+        val args = Bundle()
+        fragment.arguments = args.apply { putBoolean("isAiEnabled", isAiEnabled) }
+        loadFragment(fragment)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
