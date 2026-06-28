@@ -5,5 +5,8 @@
         <attr name="brightColor" format="color"/>
         <attr name="linesColor" format="color"/>
         <attr name="linesWidth" format="float"/>
+        <attr name="coordinateColor" format="color"/>
+        <attr name="coordinateTextSize" format="dimension"/>
+        <attr name="moveHighlightColor" format="color"/>
     </declare-styleable>
 </resources>
