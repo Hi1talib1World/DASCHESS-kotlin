@@ -21,13 +21,16 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     // Color vars
     private var brightColor: Int
     private var darkColor: Int
+    private var coordinateColor: Int
+    private var highlightColor: Int
+    private var coordinateSize: Float
 
     // Delta between each square
     private var delta: Int = 0
 
     // Vars to determine bounds of squares needed to draw
     var selectedSquareBounds: Rect = Rect(0, 0, 0, 0)
-    var availableMovesBounds: MutableList<Rect> = mutableListOf()
+    var availableMovesCoordinates: List<Pair<Int, Int>> = listOf()
 
     // Maps to init positions of pieces and keep track of them
     var whitePlayerPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>> = mutableMapOf(
@@ -71,49 +74,34 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     var currentChosenPos: Pair<Int, Int>? = null
     var previousChosenPos: Pair<Int, Int>? = null
 
-    // Drawable resources for pieces
-    private val drawableWhitePieces: MutableMap<Int, Drawable?> = mutableMapOf(
-        -1 to AppCompatResources.getDrawable(context, R.drawable.chess_klt60),
-        -2 to AppCompatResources.getDrawable(context, R.drawable.chess_qlt60),
-        -3 to AppCompatResources.getDrawable(context, R.drawable.chess_rlt60),
-        -4 to AppCompatResources.getDrawable(context, R.drawable.chess_rlt60),
-        -5 to AppCompatResources.getDrawable(context, R.drawable.chess_nlt60),
-        -6 to AppCompatResources.getDrawable(context, R.drawable.chess_nlt60),
-        -7 to AppCompatResources.getDrawable(context, R.drawable.chess_blt60),
-        -8 to AppCompatResources.getDrawable(context, R.drawable.chess_blt60),
-        -9 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -10 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -11 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -12 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -13 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -14 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -15 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60),
-        -16 to AppCompatResources.getDrawable(context, R.drawable.chess_plt60))
+    // Drawable resources for pieces (mapped by name)
+    private val whiteDrawables: Map<String, Drawable?> = mapOf(
+        "King" to AppCompatResources.getDrawable(context, R.drawable.chess_klt60),
+        "Queen" to AppCompatResources.getDrawable(context, R.drawable.chess_qlt60),
+        "Rook" to AppCompatResources.getDrawable(context, R.drawable.chess_rlt60),
+        "Bishop" to AppCompatResources.getDrawable(context, R.drawable.chess_blt60),
+        "Knight" to AppCompatResources.getDrawable(context, R.drawable.chess_nlt60),
+        "Pawn" to AppCompatResources.getDrawable(context, R.drawable.chess_plt60)
+    )
 
-    private val drawableBlackPieces: MutableMap<Int, Drawable?> = mutableMapOf(
-        1 to AppCompatResources.getDrawable(context, R.drawable.chess_kdt60),
-        2 to AppCompatResources.getDrawable(context, R.drawable.chess_qdt60),
-        3 to AppCompatResources.getDrawable(context, R.drawable.chess_rdt60),
-        4 to AppCompatResources.getDrawable(context, R.drawable.chess_rdt60),
-        5 to AppCompatResources.getDrawable(context, R.drawable.chess_ndt60),
-        6 to AppCompatResources.getDrawable(context, R.drawable.chess_ndt60),
-        7 to AppCompatResources.getDrawable(context, R.drawable.chess_bdt60),
-        8 to AppCompatResources.getDrawable(context, R.drawable.chess_bdt60),
-        9 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        10 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        11 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        12 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        13 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        14 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        15 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60),
-        16 to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60))
+    private val blackDrawables: Map<String, Drawable?> = mapOf(
+        "King" to AppCompatResources.getDrawable(context, R.drawable.chess_kdt60),
+        "Queen" to AppCompatResources.getDrawable(context, R.drawable.chess_qdt60),
+        "Rook" to AppCompatResources.getDrawable(context, R.drawable.chess_rdt60),
+        "Bishop" to AppCompatResources.getDrawable(context, R.drawable.chess_bdt60),
+        "Knight" to AppCompatResources.getDrawable(context, R.drawable.chess_ndt60),
+        "Pawn" to AppCompatResources.getDrawable(context, R.drawable.chess_pdt60)
+    )
 
     init {
         // Get access to attributes defined in xml
         context.theme.obtainStyledAttributes(attrs, R.styleable.ChessboardView, 0, 0).apply {
             try {
-                brightColor = getColor(R.styleable.ChessboardView_brightColor, Color.WHITE)
-                darkColor = getColor(R.styleable.ChessboardView_darkColor, Color.LTGRAY)
+                brightColor = getColor(R.styleable.ChessboardView_brightColor, ContextCompat.getColor(context, R.color.brightSquare))
+                darkColor = getColor(R.styleable.ChessboardView_darkColor, ContextCompat.getColor(context, R.color.darkSquare))
+                coordinateColor = getColor(R.styleable.ChessboardView_coordinateColor, ContextCompat.getColor(context, R.color.chess_text_secondary))
+                highlightColor = getColor(R.styleable.ChessboardView_moveHighlightColor, ContextCompat.getColor(context, R.color.selectionColor))
+                coordinateSize = getDimension(R.styleable.ChessboardView_coordinateTextSize, 12f * resources.displayMetrics.scaledDensity)
             }
             finally {
                 recycle()
@@ -123,22 +111,39 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
 
     // Define Paints for elements to draw
     private val darkPaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.darkSquare)
+        color = darkColor
         style = Paint.Style.FILL
     }
 
     private val brightPaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.brightSquare)
-    }
-
-    private val selectedPaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.selectionColor)
-        alpha = 200
+        color = brightColor
         style = Paint.Style.FILL
     }
 
-    private val availableMovePaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.selectionColor)
+    private val selectedPaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = highlightColor
+        alpha = 150
+        style = Paint.Style.FILL
+    }
+
+    private val coordinatePaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = coordinateColor
+        textSize = coordinateSize
+        textAlign = Paint.Align.CENTER
+        style = Paint.Style.FILL
+    }
+
+    private val highlightCirclePaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = highlightColor
+        alpha = 100
+        style = Paint.Style.FILL
+    }
+
+    private val highlightCapturePaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = highlightColor
+        alpha = 120
+        strokeWidth = 6f
+        style = Paint.Style.STROKE
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -172,30 +177,59 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         }
     }
 
+    private fun drawCoordinates(canvas: Canvas) {
+        val files = arrayOf("a", "b", "c", "d", "e", "f", "g", "h")
+        val ranks = arrayOf("8", "7", "6", "5", "4", "3", "2", "1")
+
+        for (i in 0..7) {
+            // Files (a-h) at the bottom
+            canvas.drawText(files[i], (i * delta + delta - 12).toFloat(), (8 * delta - 8).toFloat(), coordinatePaint)
+            // Ranks (1-8) at the left
+            canvas.drawText(ranks[i], 12f, (i * delta + 24).toFloat(), coordinatePaint)
+        }
+    }
+
     private fun drawSelection(canvas: Canvas) {
         // Draw special tile for selected piece
         canvas.drawRect(selectedSquareBounds, selectedPaint)
 
-        // Draw special tiles for available positions to move
-        for (bounds in availableMovesBounds) {
-            canvas.drawRect(bounds, selectedPaint)
+        // Draw modern highlights for available moves
+        for (coord in availableMovesCoordinates) {
+            val isOccupied = isSquareOccupied(coord)
+            val rect = transformToRect(coord.second, coord.first)
+            
+            if (isOccupied) {
+                // Bracket style for captures
+                val padding = 8f
+                canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), (delta/2f) - padding, highlightCapturePaint)
+            } else {
+                // Small dot for empty squares
+                canvas.drawCircle(rect.centerX().toFloat(), rect.centerY().toFloat(), (delta/6f), highlightCirclePaint)
+            }
         }
+    }
+
+    private fun isSquareOccupied(coord: Pair<Int, Int>): Boolean {
+        return whitePlayerPieces.values.any { it.second == coord } || 
+               blackPlayerPieces.values.any { it.second == coord }
     }
 
     private fun drawPieces(canvas: Canvas) {
         // Draw white pieces
-        for ((pieceNum, piece) in whitePlayerPieces) {
+        for (piece in whitePlayerPieces.values) {
+            val pieceName = piece.first
             val piecePos = piece.second
-            drawableWhitePieces[pieceNum]?.apply {
+            whiteDrawables[pieceName]?.apply {
                 bounds = transformToRect(piecePos.second, piecePos.first)
                 draw(canvas)
             }
         }
 
         // Draw black pieces
-        for ((pieceNum, piece) in blackPlayerPieces) {
+        for (piece in blackPlayerPieces.values) {
+            val pieceName = piece.first
             val piecePos = piece.second
-            drawableBlackPieces[pieceNum]?.apply {
+            blackDrawables[pieceName]?.apply {
                 bounds = transformToRect(piecePos.second, piecePos.first)
                 draw(canvas)
             }
@@ -206,6 +240,7 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         super.onDraw(canvas)
 
         drawBoard(canvas)
+        drawCoordinates(canvas)
         drawSelection(canvas)
         drawPieces(canvas)
     }
@@ -231,8 +266,6 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         previousChosenPos = currentChosenPos
         // Store coordinates of selected position on chessboard
         currentChosenPos = Pair(rowPositionOfSquare, colPositionOfSquare)
-        println("Current pos: " + currentChosenPos.toString())
-        println("Previous pos: " + previousChosenPos.toString())
     }
 
     private fun transformToRect(xPositionOfSquare: Int, yPositionOfSquare: Int): Rect {
@@ -246,23 +279,19 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
 
     // Make square with given coordinates selected
     fun displaySelection() {
-        selectedSquareBounds = transformToRect(currentChosenPos!!.second, currentChosenPos!!.first)
-        this.invalidate()
-    }
-
-    fun displayAvailableMoves(movesCoordinates: List<Pair<Int, Int>>) {
-        availableMovesBounds = mutableListOf()
-        for (movePosition in movesCoordinates) {
-            val xPositionOfSquare = movePosition.second
-            val yPositionOfSquare = movePosition.first
-
-            availableMovesBounds.add(transformToRect(xPositionOfSquare, yPositionOfSquare))
+        if (currentChosenPos != null) {
+            selectedSquareBounds = transformToRect(currentChosenPos!!.second, currentChosenPos!!.first)
             this.invalidate()
         }
     }
 
+    fun displayAvailableMoves(movesCoordinates: List<Pair<Int, Int>>) {
+        availableMovesCoordinates = movesCoordinates
+        this.invalidate()
+    }
+
     fun clearSelection() {
-        availableMovesBounds = mutableListOf()
+        availableMovesCoordinates = listOf()
         selectedSquareBounds = Rect(0, 0, 0, 0)
         invalidate()
     }
