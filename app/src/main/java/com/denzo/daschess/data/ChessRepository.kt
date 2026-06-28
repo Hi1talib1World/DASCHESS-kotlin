@@ -39,4 +39,15 @@ class ChessRepository {
             boardState = ""
         )
     }
+
+    suspend fun getPuzzles(): List<ChessPuzzle> {
+        delay(1000)
+        return listOf(
+            ChessPuzzle("1", "EASY", "Find the best move for White", ""),
+            ChessPuzzle("2", "MEDIUM", "Checkmate in 2", ""),
+            ChessPuzzle("3", "DIFFICULT", "Sacrifice and win", ""),
+            ChessPuzzle("4", "EASY", "Defend the back rank", ""),
+            ChessPuzzle("5", "MEDIUM", "Fork the King and Queen", "")
+        )
+    }
 }
