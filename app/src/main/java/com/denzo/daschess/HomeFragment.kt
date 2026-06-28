@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.denzo.daschess.data.ChessRepository
 import com.denzo.daschess.models.MatchHistoryItem
 import com.denzo.daschess.models.UserStats
@@ -18,7 +19,7 @@ import com.denzo.daschess.models.UserStats
 class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
-    private lateinit var loadingIndicator: View // We'll add this to XML
+    private lateinit var matchesAdapter: MatchesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,10 +39,17 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupRecyclerView(view)
         setupObservers(view)
         setupClickListeners(view)
         
         viewModel.loadDashboardData()
+    }
+
+    private fun setupRecyclerView(view: View) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_recent_matches)
+        matchesAdapter = MatchesAdapter(emptyList())
+        recyclerView.adapter = matchesAdapter
     }
 
     private fun setupObservers(view: View) {
@@ -50,7 +58,7 @@ class HomeFragment : Fragment() {
         })
 
         viewModel.recentMatches.observe(viewLifecycleOwner, Observer { matches ->
-            updateMatchesUI(view, matches)
+            updateMatchesUI(matches)
         })
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
@@ -70,7 +78,7 @@ class HomeFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.btn_train_ai).setOnClickListener {
-            Toast.makeText(context, "AI Training coming soon!", Toast.LENGTH_SHORT).show()
+            (activity as? MainActivity)?.startNewGame(isAiEnabled = true)
         }
         
         view.findViewById<Button>(R.id.btn_solve_now).setOnClickListener {
@@ -84,15 +92,8 @@ class HomeFragment : Fragment() {
         view.findViewById<TextView>(R.id.rank_value).text = "#${stats.globalRank}"
     }
 
-    private fun updateMatchesUI(view: View, matches: List<MatchHistoryItem>) {
-        // In a real app, this would be a RecyclerView. 
-        // For this refactor, we'll update the first two placeholders.
-        if (matches.isNotEmpty()) {
-            val match1 = matches[0]
-            view.findViewById<TextView>(R.id.match1_name).text = "${match1.opponentName} ${match1.opponentRating}"
-            view.findViewById<TextView>(R.id.match1_details).text = "${match1.gameType} • ${match1.timeControl}"
-            view.findViewById<TextView>(R.id.match1_score).text = match1.result
-        }
+    private fun updateMatchesUI(matches: List<MatchHistoryItem>) {
+        matchesAdapter.updateMatches(matches)
     }
 }
 
