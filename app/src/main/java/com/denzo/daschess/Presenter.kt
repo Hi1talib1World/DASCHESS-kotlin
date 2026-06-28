@@ -1,10 +1,13 @@
 package com.denzo.daschess
 
+import android.os.Handler
+import android.os.Looper
 import kotlin.math.sign
 
 class Presenter(private val view: ChessboardInterface) {
 
     private var game = Game()
+    private val chessAI = ChessAI()
 
     // Variable of check state
     // 0: no check
@@ -19,9 +22,10 @@ class Presenter(private val view: ChessboardInterface) {
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces)
     }
 
-    fun restartGame() {
+    fun restartGame(isAiEnabled: Boolean = false) {
         // Init new Game object with initial state of the game
         game = Game()
+        game.isAiEnabled = isAiEnabled
         // ANd redraw pieces on the board
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces)
     }
@@ -79,8 +83,19 @@ class Presenter(private val view: ChessboardInterface) {
             }
             if (game.isEnd != 0) {
                 view.displayWinner(game.isEnd)
+            } else if (game.isAiEnabled && game.currentPlayerColor == 1) { // AI is always Black for now
+                triggerAiMove()
             }
         }
+    }
+
+    private fun triggerAiMove() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            val move = chessAI.getRandomMove(game)
+            if (move != null) {
+                movePiece(move.first, move.second)
+            }
+        }, 800) // 800ms delay to simulate thinking
     }
 
 
