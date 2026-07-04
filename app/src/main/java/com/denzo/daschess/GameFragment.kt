@@ -121,8 +121,8 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
         
         // Reset timers only if move log is empty (start of game)
         if (moveLogText.text == "Moves: ") {
-            whiteTimeLeft = 600000L
-            blackTimeLeft = 600000L
+            whiteTimeLeft = 3600000L
+            blackTimeLeft = 3600000L
             updateTimerText(whiteTimerText, whiteTimeLeft)
             updateTimerText(blackTimerText, blackTimeLeft)
         }
