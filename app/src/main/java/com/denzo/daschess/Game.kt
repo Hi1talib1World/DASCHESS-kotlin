@@ -24,11 +24,12 @@ class Game {
     var isAiEnabled = false
 
     // Variables to store values of positions of the last move to implement Cancellation of that move
-    private var lastMoveCurrentPos: Pair<Int, Int>? = null
-    private var lastMovePreviousPos: Pair<Int, Int>? = null
+    var lastMoveCurrentPos: Pair<Int, Int>? = null
+    var lastMovePreviousPos: Pair<Int, Int>? = null
+    var lastMovedPieceNum: Int = 0
 
     init {
-        gameUtils.updateAllAvailableMoves(players, board)
+        gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
     }
 
     fun cancelMove() {
@@ -42,11 +43,12 @@ class Game {
                 lastMovePreviousPos!!,
                 capturedPiecesQueue)
 
-            gameUtils.updateAllAvailableMoves(players, board)
-            isEnd = gameUtils.checkEnd(players)
+            gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
+            isEnd = gameUtils.checkEnd(players, board, capturedPiecesQueue)
             // reset these variables to not be able cancel move if it's invalid
             lastMoveCurrentPos = null
             lastMovePreviousPos = null
+            lastMovedPieceNum = 0
         }
     }
 
@@ -58,27 +60,33 @@ class Game {
 
         // Basic Check: Cannot castle while in check
         if (pieceName == "King" && abs(piecePos.second - movePos.second) == 2) {
-            if (gameUtils.isCheck(piecePos, opponent)) {
+            if (gameUtils.isCheck(piecePos, opponent, board)) {
                 return // Invalid move: cannot castle while in check
             }
             // Cannot castle through a square under attack
-            val passedCol = if (movePos.second == 5) 4 else 2
-            if (gameUtils.isCheck(Pair(piecePos.first, passedCol), opponent)) {
+            val passedCol = if (movePos.second == 6) 5 else 3
+            if (gameUtils.isCheck(Pair(piecePos.first, passedCol), opponent, board)) {
                 return // Invalid move: cannot castle through attack
             }
         }
 
         gameUtils.makeMove(players, currentPlayerColor, board, piecePos, movePos, capturedPiecesQueue)
-        gameUtils.updateAllAvailableMoves(players, board)
+        
+        // Update last move info BEFORE updating available moves
+        lastMovedPieceNum = pieceNum
+        lastMovePreviousPos = piecePos
+        lastMoveCurrentPos = movePos
+
+        gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
 
         // Check if check for both players
-        isCheck[currentPlayerColor] = gameUtils.isCheck(players[currentPlayerColor]!!.pieces[currentPlayerColor]!!.second, players[-1*currentPlayerColor] as Player)
-        isCheck[-1*currentPlayerColor] = gameUtils.isCheck(players[-1*currentPlayerColor]!!.pieces[-1*currentPlayerColor]!!.second, players[currentPlayerColor] as Player)
+        isCheck[currentPlayerColor] = gameUtils.isCheck(players[currentPlayerColor]!!.pieces[currentPlayerColor]!!.second, players[-1*currentPlayerColor] as Player, board)
+        isCheck[-1*currentPlayerColor] = gameUtils.isCheck(players[-1*currentPlayerColor]!!.pieces[-1*currentPlayerColor]!!.second, players[currentPlayerColor] as Player, board)
 
         // Check if player made invalid move and open his king for opponent's attack
         if (isCheck[currentPlayerColor] == true) {
             gameUtils.cancelMove(players, currentPlayerColor, board, movePos, piecePos, capturedPiecesQueue)
-            gameUtils.updateAllAvailableMoves(players, board)
+            gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
         }
         else {
             // And assign them only in case if move is valid
@@ -87,7 +95,7 @@ class Game {
             // Change current player to opponent
             currentPlayerColor *= -1
             // Update winning state
-            isEnd = gameUtils.checkEnd(players)
+            isEnd = gameUtils.checkEnd(players, board, capturedPiecesQueue)
         }
     }
 }
