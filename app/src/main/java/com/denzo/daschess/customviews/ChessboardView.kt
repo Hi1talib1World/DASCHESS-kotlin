@@ -8,7 +8,10 @@ import android.graphics.Paint
 import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.util.AttributeSet
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -27,15 +30,17 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
 
     // Delta between each square
     private var delta: Int = 0
+    private val toneGenerator = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)
 
     // Vars to determine bounds of squares needed to draw
     var selectedSquareBounds: Rect = Rect(0, 0, 0, 0)
+    var checkSquareBounds: Rect = Rect(0, 0, 0, 0)
     var availableMovesCoordinates: List<Pair<Int, Int>> = listOf()
 
     // Maps to init positions of pieces and keep track of them
     var whitePlayerPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>> = mutableMapOf(
-        -1 to Pair("King", Pair(7, 3)),
-        -2 to Pair("Queen", Pair(7, 4)),
+        -1 to Pair("King", Pair(7, 4)),
+        -2 to Pair("Queen", Pair(7, 3)),
         -3 to Pair("Rook", Pair(7, 0)),
         -4 to Pair("Rook", Pair(7, 7)),
         -5 to Pair("Knight", Pair(7, 1)),
@@ -52,8 +57,8 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         -16 to Pair("Pawn", Pair(6, 7))
     )
     var blackPlayerPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>> = mutableMapOf(
-        1 to Pair("King", Pair(0, 3)),
-        2 to Pair("Queen", Pair(0, 4)),
+        1 to Pair("King", Pair(0, 4)),
+        2 to Pair("Queen", Pair(0, 3)),
         3 to Pair("Rook", Pair(0, 0)),
         4 to Pair("Rook", Pair(0, 7)),
         5 to Pair("Knight", Pair(0, 1)),
@@ -73,6 +78,10 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     // variables to handle selecting and moving pieces
     var currentChosenPos: Pair<Int, Int>? = null
     var previousChosenPos: Pair<Int, Int>? = null
+    
+    // variables to highlight last move
+    var lastMoveFrom: Pair<Int, Int>? = null
+    var lastMoveTo: Pair<Int, Int>? = null
 
     // Drawable resources for pieces (mapped by name)
     private val whiteDrawables: Map<String, Drawable?> = mapOf(
@@ -146,6 +155,18 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         style = Paint.Style.STROKE
     }
 
+    private val checkPaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = Color.RED
+        alpha = 100
+        style = Paint.Style.FILL
+    }
+
+    private val lastMovePaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = Color.YELLOW
+        alpha = 80
+        style = Paint.Style.FILL
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         delta = measuredWidth/8
         super.onMeasure(widthMeasureSpec, widthMeasureSpec)
@@ -190,6 +211,15 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     }
 
     private fun drawSelection(canvas: Canvas) {
+        // Draw last move highlights
+        lastMoveFrom?.let { canvas.drawRect(transformToRect(it.second, it.first), lastMovePaint) }
+        lastMoveTo?.let { canvas.drawRect(transformToRect(it.second, it.first), lastMovePaint) }
+
+        // Draw red highlight for King in check
+        if (checkSquareBounds != Rect(0, 0, 0, 0)) {
+            canvas.drawRect(checkSquareBounds, checkPaint)
+        }
+
         // Draw special tile for selected piece
         canvas.drawRect(selectedSquareBounds, selectedPaint)
 
@@ -262,6 +292,10 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         val rowPositionOfSquare = (y/delta).toInt()
         val colPositionOfSquare = (x/delta).toInt()
 
+        if (rowPositionOfSquare in 0..7 && colPositionOfSquare in 0..7) {
+            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        }
+
         // Store coordinates of last selected position
         previousChosenPos = currentChosenPos
         // Store coordinates of selected position on chessboard
@@ -293,6 +327,24 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     fun clearSelection() {
         availableMovesCoordinates = listOf()
         selectedSquareBounds = Rect(0, 0, 0, 0)
+        invalidate()
+    }
+
+    fun displayCheckSquare(pos: Pair<Int, Int>?) {
+        checkSquareBounds = if (pos != null) {
+            transformToRect(pos.second, pos.first)
+        } else {
+            Rect(0, 0, 0, 0)
+        }
+        invalidate()
+    }
+
+    fun setLastMove(from: Pair<Int, Int>?, to: Pair<Int, Int>?) {
+        lastMoveFrom = from
+        lastMoveTo = to
+        if (from != null && to != null) {
+            toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, 100)
+        }
         invalidate()
     }
 
