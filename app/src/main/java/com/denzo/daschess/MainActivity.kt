@@ -58,15 +58,4 @@ class MainActivity : AppCompatActivity() {
         fragment.arguments = args.apply { putBoolean("isAiEnabled", isAiEnabled) }
         loadFragment(fragment)
     }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (currentFragment is GameFragment) {
-            val chessboard = currentFragment.view?.findViewById<ChessboardView>(R.id.chessboard)
-            if (chessboard != null) {
-                currentFragment.sendInputToPresenter(chessboard.currentChosenPos, chessboard.previousChosenPos)
-            }
-        }
-        return super.onTouchEvent(event)
-    }
 }
