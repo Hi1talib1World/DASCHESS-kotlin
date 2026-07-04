@@ -1,5 +1,6 @@
 package com.denzo.daschess
 
+import kotlin.math.abs
 import kotlin.math.sign
 
 class Player(var color: Int) {
@@ -10,8 +11,8 @@ class Player(var color: Int) {
 
     // Number of fig -> Name, Position
     val pieces: MutableMap<Int, Pair<String, Pair<Int, Int>>> = mutableMapOf(
-        1 * color to Pair("King", Pair(initialRowPos, 3)),
-        2 * color to Pair("Queen", Pair(initialRowPos, 4)),
+        1 * color to Pair("King", Pair(initialRowPos, 4)),
+        2 * color to Pair("Queen", Pair(initialRowPos, 3)),
         3 * color to Pair("Rook", Pair(initialRowPos, 0)),
         4 * color to Pair("Rook", Pair(initialRowPos, 7)),
         5 * color to Pair("Knight", Pair(initialRowPos, 1)),
@@ -30,7 +31,12 @@ class Player(var color: Int) {
     }
 
     // function to update available moves for all pieces of this Player
-    fun updateAvailableMoves(board: Array<IntArray>): Unit {
+    fun updateAvailableMoves(
+        board: Array<IntArray>,
+        lastMoveCurrent: Pair<Int, Int>? = null,
+        lastMovePrevious: Pair<Int, Int>? = null,
+        lastMovedPiece: Int = 0
+    ): Unit {
 
         // before updating available moves clear moves for previous state
         availableMoves = mutableMapOf()
@@ -44,8 +50,12 @@ class Player(var color: Int) {
         fun checkForObstacle(currentPos: Pair<Int, Int>, nextPos: Pair<Int, Int>): Boolean {
             val currentFig = board[currentPos.first][currentPos.second]
             val nextFig = board[nextPos.first][nextPos.second]
-            return (currentFig == 0 || currentFig.sign == color) &&
-                    (nextFig == 0 || nextFig.sign == -color)
+            
+            val currentSign = if (currentFig > 0) 1 else if (currentFig < 0) -1 else 0
+            val nextSign = if (nextFig > 0) 1 else if (nextFig < 0) -1 else 0
+            
+            return (currentFig == 0 || currentSign == color) &&
+                    (nextFig == 0 || nextSign == -color)
         }
 
         fun checkIfOnBoard(pos: Pair<Int, Int>): Boolean = (0..7).contains(pos.first) && (0..7).contains(pos.second)
@@ -59,7 +69,8 @@ class Player(var color: Int) {
                 cols.forEach{col ->
                     if (Pair(row, col) != pos) {
                         val fig = board[row][col]
-                        if (fig == 0 || fig.sign == -color) {
+                        val figSign = if (fig > 0) 1 else if (fig < 0) -1 else 0
+                        if (fig == 0 || figSign == -color) {
                             positions += Pair(row, col)
                         }
                     }
@@ -71,15 +82,15 @@ class Player(var color: Int) {
                 // Kingside Castling (towards Rook at col 7)
                 val rookKingsideNum = 4 * color
                 if (!movedPieces.contains(rookKingsideNum)) {
-                    if (board[initialRowPos][4] == 0 && board[initialRowPos][5] == 0 && board[initialRowPos][6] == 0) {
-                        positions += Pair(initialRowPos, 5) // King moves 2 squares
+                    if (board[initialRowPos][5] == 0 && board[initialRowPos][6] == 0) {
+                        positions += Pair(initialRowPos, 6) // King moves 2 squares to g-file
                     }
                 }
                 // Queenside Castling (towards Rook at col 0)
                 val rookQueensideNum = 3 * color
                 if (!movedPieces.contains(rookQueensideNum)) {
-                    if (board[initialRowPos][1] == 0 && board[initialRowPos][2] == 0) {
-                        positions += Pair(initialRowPos, 1) // King moves 2 squares
+                    if (board[initialRowPos][1] == 0 && board[initialRowPos][2] == 0 && board[initialRowPos][3] == 0) {
+                        positions += Pair(initialRowPos, 2) // King moves 2 squares to c-file
                     }
                 }
             }
@@ -183,7 +194,11 @@ class Player(var color: Int) {
                 }
             }
 
-            fun checkIfObstacle(pos: Pair<Int, Int>): Boolean = (board[pos.first][pos.second]).sign != color
+            fun checkIfObstacle(pos: Pair<Int, Int>): Boolean {
+                val fig = board[pos.first][pos.second]
+                val figSign = if (fig > 0) 1 else if (fig < 0) -1 else 0
+                return figSign != color
+            }
 
             return positions.filter{(checkIfOnBoard(it) && checkIfObstacle(it))}.toMutableList()
         }
@@ -193,7 +208,11 @@ class Player(var color: Int) {
             val nextRow = pos.first + color
 
             // Helper function to determine if any attack moves are possible
-            fun checkIfEnemy(pos: Pair<Int, Int>): Boolean = board[pos.first][pos.second].sign == -color
+            fun checkIfEnemy(pos: Pair<Int, Int>): Boolean {
+                val fig = board[pos.first][pos.second]
+                val figSign = if (fig > 0) 1 else if (fig < 0) -1 else 0
+                return figSign == -color
+            }
 
             // Custom function for pawn 'cause it has different logic of moving and capturing
             // It can't move to tne next position if it's occupied by an enemy
@@ -217,6 +236,19 @@ class Player(var color: Int) {
 
             val attackPositions = mutableListOf(Pair(nextRow, pos.second - 1), Pair(nextRow, pos.second + 1)).filter {
                     move -> (checkIfOnBoard(move) && checkIfEnemy(move))
+            }.toMutableList()
+
+            // En Passant detection
+            if (lastMoveCurrent != null && lastMovePrevious != null) {
+                // If last move was an enemy pawn moving 2 squares
+                val lastPieceSign = if (lastMovedPiece > 0) 1 else if (lastMovedPiece < 0) -1 else 0
+                if (lastPieceSign == -color && abs(lastMoveCurrent.first - lastMovePrevious.first) == 2) {
+                    // Check if it's currently adjacent to our pawn
+                    if (lastMoveCurrent.first == pos.first && abs(lastMoveCurrent.second - pos.second) == 1) {
+                        // Square to move into is behind the enemy pawn
+                        attackPositions += Pair(pos.first + color, lastMoveCurrent.second)
+                    }
+                }
             }
 
             return movePositions.union(attackPositions).toMutableList()
