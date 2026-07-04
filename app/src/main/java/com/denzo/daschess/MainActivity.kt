@@ -1,7 +1,6 @@
 package com.denzo.daschess
 
 import android.os.Bundle
-import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.denzo.daschess.customviews.ChessboardView
