@@ -78,17 +78,17 @@ class Player(var color: Int) {
 
             // Castling logic (Simplified: checks path and movement, "under attack" checked in makeMove)
             val kingNum = 1 * color
-            if (!movedPieces.contains(kingNum)) {
+            if ((pieceMoveCounts[kingNum] ?: 0) == 0) {
                 // Kingside Castling (towards Rook at col 7)
                 val rookKingsideNum = 4 * color
-                if (!movedPieces.contains(rookKingsideNum)) {
+                if ((pieceMoveCounts[rookKingsideNum] ?: 0) == 0) {
                     if (board[initialRowPos][5] == 0 && board[initialRowPos][6] == 0) {
                         positions += Pair(initialRowPos, 6) // King moves 2 squares to g-file
                     }
                 }
                 // Queenside Castling (towards Rook at col 0)
                 val rookQueensideNum = 3 * color
-                if (!movedPieces.contains(rookQueensideNum)) {
+                if ((pieceMoveCounts[rookQueensideNum] ?: 0) == 0) {
                     if (board[initialRowPos][1] == 0 && board[initialRowPos][2] == 0 && board[initialRowPos][3] == 0) {
                         positions += Pair(initialRowPos, 2) // King moves 2 squares to c-file
                     }
