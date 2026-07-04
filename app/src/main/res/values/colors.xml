@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#101723</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FE4755</color>
     <color name="black_overlay">#66000000</color>
 
     <color name="transparent">#00FFFFFF</color>
@@ -10,9 +10,9 @@
 
 
     <color name="black_light">#212121</color>
-    <color name="brightSquare">#FFFFFF</color>
-    <color name="darkSquare">#DCE2F0</color>
-    <color name="selectionColor">#4D64E1</color>
+    <color name="brightSquare">#E7E4DF</color>
+    <color name="darkSquare">#101723</color>
+    <color name="selectionColor">#FE4755</color>
     <color name="material_amber_100">#FFECB3</color>
     <color name="material_amber_200">#FFE082</color>
     <color name="material_amber_300">#FFD54F</color>
@@ -272,16 +272,16 @@
     <color name="commit_file_modified_color">#dbab09</color>
 
     <!-- New UI Colors -->
-    <color name="chess_bg_light">#F5F7FA</color>
-    <color name="chess_primary">#0A1245</color>
-    <color name="chess_secondary">#DCE2F0</color>
-    <color name="chess_accent">#4D64E1</color>
-    <color name="chess_text_primary">#0A1245</color>
+    <color name="chess_bg_light">#E7E4DF</color>
+    <color name="chess_primary">#101723</color>
+    <color name="chess_secondary">#E7E4DF</color>
+    <color name="chess_accent">#FE4755</color>
+    <color name="chess_text_primary">#101723</color>
     <color name="chess_text_secondary">#6B7280</color>
     <color name="chess_card_bg">#FFFFFF</color>
     <color name="chess_button_text">#FFFFFF</color>
     <color name="chess_win">#10B981</color>
-    <color name="chess_loss">#EF4444</color>
+    <color name="chess_loss">#FE4755</color>
     <color name="chess_draw">#6B7280</color>
 
 </resources>
