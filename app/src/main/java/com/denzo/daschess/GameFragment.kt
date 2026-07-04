@@ -24,6 +24,7 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface {
     
     private lateinit var whiteTimerText: TextView
     private lateinit var blackTimerText: TextView
+    private lateinit var moveLogText: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,13 +37,14 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        presenter = Presenter(this)
-        val isAiEnabled = arguments?.getBoolean("isAiEnabled") ?: false
-        presenter.restartGame(isAiEnabled)
-
         chessboard = view.findViewById(R.id.chessboard)
         whiteTimerText = view.findViewById(R.id.player_timer)
         blackTimerText = view.findViewById(R.id.opponent_timer)
+        moveLogText = view.findViewById(R.id.move_log)
+
+        presenter = Presenter(this)
+        val isAiEnabled = arguments?.getBoolean("isAiEnabled") ?: false
+        presenter.restartGame(isAiEnabled)
 
         view.findViewById<Button>(R.id.btn_undo).setOnClickListener {
             presenter.cancelMove()
@@ -102,30 +104,62 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface {
         chessboard.clearSelection()
     }
 
+    override fun setLastMove(from: Pair<Int, Int>?, to: Pair<Int, Int>?) {
+        chessboard.setLastMove(from, to)
+    }
+
+    override fun updateMoveLog(moves: String) {
+        moveLogText.text = "Moves: $moves"
+    }
+
     override fun redrawPieces(
         whitePieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
-        blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>
+        blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
+        currentPlayer: Int
     ) {
         chessboard.redrawPieces(whitePieces, blackPieces)
         chessboard.clearSelection()
         
+        // Reset timers if it's the very first move (start of game)
+        // Heuristic: if many pieces are in start pos
+        if (whitePieces.size == 16 && blackPieces.size == 16 && whitePieces[-1]?.second == Pair(7, 4)) {
+            whiteTimeLeft = 600000L
+            blackTimeLeft = 600000L
+            updateTimerText(whiteTimerText, whiteTimeLeft)
+            updateTimerText(blackTimerText, blackTimeLeft)
+        }
+
         // Switch timers on move
-        // This is a simplified check - in a real app, track the turn in Game model
-        // startTimer(isWhiteTurn) 
+        startTimer(currentPlayer == -1)
     }
 
     override fun displayWinner(player: Int) {
         whiteTimer?.cancel()
         blackTimer?.cancel()
-        val winnerColorString = if (player == -1) "White player" else "Black player"
-        view?.let { Snackbar.make(it.findViewById(R.id.chessboard), "$winnerColorString wins!", Snackbar.LENGTH_INDEFINITE)
+        val message = when (player) {
+            -1 -> "White player wins!"
+            1 -> "Black player wins!"
+            2 -> "Draw by Stalemate!"
+            else -> "Game Over!"
+        }
+        view?.let { Snackbar.make(it.findViewById(R.id.chessboard), message, Snackbar.LENGTH_INDEFINITE)
             .setAction("NEW GAME") { (activity as? MainActivity)?.startNewGame() }
             .show() 
         }
     }
 
     override fun displayCheck(player: Int) {
+        if (player == 0) {
+            chessboard.displayCheckSquare(null)
+            return
+        }
         val kingInCheckColor = if (player == -1) "White" else "Black"
+        
+        // Find king's position to highlight
+        val pieces = if (player == -1) chessboard.whitePlayerPieces else chessboard.blackPlayerPieces
+        val kingPos = pieces[player]?.second
+        chessboard.displayCheckSquare(kingPos)
+
         view?.let { Snackbar.make(it.findViewById(R.id.chessboard), "$kingInCheckColor king in check!", Snackbar.LENGTH_SHORT).show() }
     }
     
