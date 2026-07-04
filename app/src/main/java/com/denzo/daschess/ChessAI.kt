@@ -99,10 +99,13 @@ class ChessAI {
             if (target != 0) Math.abs(target) else 0
         }
 
+        // Use a copy for search to avoid UI race conditions
+        val simulationGame = game.copy()
+
         for (move in sortedMoves) {
-            game.gameUtils.makeMove(game.players, color, game.board, move.first, move.second, game.capturedPiecesQueue)
-            val score = minimax(game, depth - 1, Int.MIN_VALUE, Int.MAX_VALUE, !isMaximizing, move.second, move.first, game.board[move.second.first][move.second.second])
-            game.gameUtils.cancelMove(game.players, color, game.board, move.second, move.first, game.capturedPiecesQueue)
+            simulationGame.gameUtils.makeMove(simulationGame.players, color, simulationGame.board, move.first, move.second, simulationGame.capturedPiecesQueue)
+            val score = minimax(simulationGame, depth - 1, Int.MIN_VALUE, Int.MAX_VALUE, !isMaximizing, move.second, move.first, simulationGame.board[move.second.first][move.second.second])
+            simulationGame.gameUtils.cancelMove(simulationGame.players, color, simulationGame.board, move.second, move.first, simulationGame.capturedPiecesQueue)
             
             if (isMaximizing) {
                 if (score > bestScore) {
