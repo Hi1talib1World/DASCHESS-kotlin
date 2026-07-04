@@ -27,8 +27,28 @@ class Player(var color: Int) {
     init {
         for (i in 0..7) {
             pieces[(i + 9) * color] = Pair("Pawn", Pair(initialRowPos + color, i))
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
     }
+}
+        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
     // function to update available moves for all pieces of this Player
     fun updateAvailableMoves(
@@ -56,14 +76,44 @@ class Player(var color: Int) {
             
             return (currentFig == 0 || currentSign == color) &&
                     (nextFig == 0 || nextSign == -color)
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun checkIfOnBoard(pos: Pair<Int, Int>): Boolean = (0..7).contains(pos.first) && (0..7).contains(pos.second)
 
         fun fKing(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             val positions = mutableListOf<Pair<Int, Int>>()
-            val rows = ((pos.first - 1)..(pos.first + 1)).toList().filter{(checkIfOnBoard(Pair(it, pos.second)))}
-            val cols = ((pos.second - 1)..(pos.second + 1)).toList().filter{(checkIfOnBoard(Pair(pos.first, it)))}
+            val rows = ((pos.first - 1)..(pos.first + 1)).toList().filter{(checkIfOnBoard(Pair(it, pos.second)))    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+            val cols = ((pos.second - 1)..(pos.second + 1)).toList().filter{(checkIfOnBoard(Pair(pos.first, it)))    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             rows.forEach{row ->
                 cols.forEach{col ->
@@ -72,9 +122,39 @@ class Player(var color: Int) {
                         val figSign = if (fig > 0) 1 else if (fig < 0) -1 else 0
                         if (fig == 0 || figSign == -color) {
                             positions += Pair(row, col)
-                        }
-                    }
-                }}
+                            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                }    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             // Castling logic (Simplified: checks path and movement, "under attack" checked in makeMove)
             val kingNum = 1 * color
@@ -84,18 +164,78 @@ class Player(var color: Int) {
                 if ((pieceMoveCounts[rookKingsideNum] ?: 0) == 0) {
                     if (board[initialRowPos][5] == 0 && board[initialRowPos][6] == 0) {
                         positions += Pair(initialRowPos, 6) // King moves 2 squares to g-file
-                    }
-                }
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
                 // Queenside Castling (towards Rook at col 0)
                 val rookQueensideNum = 3 * color
                 if ((pieceMoveCounts[rookQueensideNum] ?: 0) == 0) {
                     if (board[initialRowPos][1] == 0 && board[initialRowPos][2] == 0 && board[initialRowPos][3] == 0) {
                         positions += Pair(initialRowPos, 2) // King moves 2 squares to c-file
-                    }
-                }
-            }
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
             return positions
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun fRook(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             val positions = mutableListOf<Pair<Int, Int>>()
@@ -114,8 +254,28 @@ class Player(var color: Int) {
                         checkForObstacle(Pair(row, pos.second), Pair(row+order, pos.second))) {
                         row += order
                         positions += Pair(row, pos.second)
-                    }
-                }}
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                }    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             arrayOf(0, 7).forEach { endPoint ->
                 run {
@@ -126,11 +286,51 @@ class Player(var color: Int) {
                         checkForObstacle(Pair(pos.first, col), Pair(pos.first, col+order))){
                         col += order
                         positions += Pair(pos.first, col)
-                    }
-                }
-            }
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
             return positions
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun fBishop(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             val positions = mutableListOf<Pair<Int, Int>>()
@@ -149,10 +349,50 @@ class Player(var color: Int) {
                             row += order
                             col += order
                             positions += Pair(row, col)
-                        }
-                    }
-                }
-            }
+                            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             fun scanDiag2(): Unit {
                 arrayOf(Pair(0, 7), Pair(7, 0)).forEach{endPoints ->
@@ -167,15 +407,65 @@ class Player(var color: Int) {
                             row += order
                             col -= order
                             positions += Pair(row, col)
-                        }
-                    }
-                }
-            }
+                            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             scanDiag1()
             scanDiag2()
             return positions
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun fQueen(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             // Queen moves just like Rook and Bishop together
@@ -183,7 +473,17 @@ class Player(var color: Int) {
             val linesPositions = fRook(pos)
 
             return diagonalPositions.union(linesPositions).toMutableList()
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun fKnight(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             val positions = mutableListOf<Pair<Int, Int>>()
@@ -191,17 +491,57 @@ class Player(var color: Int) {
                 run {
                     positions += Pair(pos.first + 2 * signs.first, pos.second + 1 * signs.second)
                     positions += Pair(pos.first + 1 * signs.first, pos.second + 2 * signs.second)
-                }
-            }
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             fun checkIfObstacle(pos: Pair<Int, Int>): Boolean {
                 val fig = board[pos.first][pos.second]
                 val figSign = if (fig > 0) 1 else if (fig < 0) -1 else 0
                 return figSign != color
-            }
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             return positions.filter{(checkIfOnBoard(it) && checkIfObstacle(it))}.toMutableList()
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun fPawn(pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             val movePositions = mutableListOf<Pair<Int, Int>>()
@@ -212,7 +552,17 @@ class Player(var color: Int) {
                 val fig = board[pos.first][pos.second]
                 val figSign = if (fig > 0) 1 else if (fig < 0) -1 else 0
                 return figSign == -color
-            }
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             // Custom function for pawn 'cause it has different logic of moving and capturing
             // It can't move to tne next position if it's occupied by an enemy
@@ -220,7 +570,17 @@ class Player(var color: Int) {
                 val currentFig = board[currentPos.first][currentPos.second]
                 val nextFig = board[nextPos.first][nextPos.second]
                 return (currentFig == 0 || currentFig.sign == color) && (nextFig == 0)
-            }
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             // If haven't done any move is possible to move in 2 positions forward
             if (pos.first == initialRowPos + color) {
@@ -230,8 +590,28 @@ class Player(var color: Int) {
                     row += color
                     movePositions += Pair(row, pos.second)
 
-                }
-            }
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
             else if ((0..7).contains(nextRow) && board[nextRow][pos.second] == 0) movePositions += Pair(nextRow, pos.second)
 
             val attackPositions = mutableListOf(Pair(nextRow, pos.second - 1), Pair(nextRow, pos.second + 1)).filter {
@@ -247,12 +627,52 @@ class Player(var color: Int) {
                     if (lastMoveCurrent.first == pos.first && abs(lastMoveCurrent.second - pos.second) == 1) {
                         // Square to move into is behind the enemy pawn
                         attackPositions += Pair(pos.first + color, lastMoveCurrent.second)
-                    }
-                }
-            }
+                        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                    fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
             return movePositions.union(attackPositions).toMutableList()
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         fun applyFunction(name: String, pos: Pair<Int, Int>): MutableList<Pair<Int, Int>> {
             return when (name) {
@@ -263,8 +683,28 @@ class Player(var color: Int) {
                 "Bishop" -> fBishop(pos)
                 "Pawn" -> fPawn(pos)
                 else -> mutableListOf()
-            }
-        }
+                fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 
         // update of available moves itself
         for ((pieceNum, piece) in pieces) {
@@ -272,6 +712,26 @@ class Player(var color: Int) {
             val pieceName = piece.first
             val piecePos = piece.second
             availableMoves[pieceNum] = applyFunction(pieceName, piecePos)
-        }
+            fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
     }
+}
+        fun copy(): Player {
+        val newPlayer = Player(color)
+        newPlayer.pieces.clear()
+        newPlayer.pieces.putAll(pieces)
+        newPlayer.availableMoves.clear()
+        newPlayer.availableMoves.putAll(availableMoves)
+        newPlayer.pieceMoveCounts.clear()
+        newPlayer.pieceMoveCounts.putAll(pieceMoveCounts)
+        return newPlayer
+    }
+}
 }
