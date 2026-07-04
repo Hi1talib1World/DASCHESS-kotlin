@@ -98,9 +98,15 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     private val lastMovePaint = Paint(ANTI_ALIAS_FLAG).apply { color = Color.YELLOW; alpha = 80 }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val size = measuredWidth.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
+        
+        // Use the smaller dimension to keep it square and fitting
+        val size = if (width > 0 && height > 0) Math.min(width, height) else width.coerceAtLeast(height)
+        
         delta = size / 8
-        setMeasuredDimension(size, size)
+        val finalSize = delta * 8
+        setMeasuredDimension(finalSize, finalSize)
     }
 
     override fun onDraw(canvas: Canvas) {
