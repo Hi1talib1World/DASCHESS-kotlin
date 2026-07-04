@@ -22,7 +22,7 @@ class Player(var color: Int) {
     )
 
     var availableMoves = mutableMapOf<Int, List<Pair<Int, Int>>>()
-    val movedPieces = mutableSetOf<Int>()
+    val pieceMoveCounts = mutableMapOf<Int, Int>()
 
     init {
         for (i in 0..7) {
