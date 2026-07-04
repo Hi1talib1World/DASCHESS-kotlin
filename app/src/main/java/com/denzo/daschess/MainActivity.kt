@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startNewGame(isAiEnabled: Boolean = false) {
-        bottomNavigation.selectedItemId = R.id.nav_play // Or we could have a separate "Game" screen
         // For now, let's load GameFragment into the container
         val fragment = GameFragment()
         val args = Bundle()
