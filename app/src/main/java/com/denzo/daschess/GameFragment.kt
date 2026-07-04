@@ -99,6 +99,17 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
         moveLogText.text = "Moves: $moves"
     }
 
+    override fun showPromotionDialog(callback: (String) -> Unit) {
+        val options = arrayOf("Queen", "Rook", "Bishop", "Knight")
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Promote Pawn to:")
+            .setItems(options) { _, which ->
+                callback(options[which])
+            }
+            .setCancelable(false)
+            .show()
+    }
+
     override fun redrawPieces(
         whitePieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
         blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
