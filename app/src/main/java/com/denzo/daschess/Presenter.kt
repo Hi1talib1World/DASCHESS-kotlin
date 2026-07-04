@@ -28,8 +28,8 @@ class Presenter(private val view: ChessboardInterface) {
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
     }
 
-    fun handleInput(currentPosition: Pair<Int, Int>?, previousPosition: Pair<Int, Int>?) {
-        if (isAiThinking) return
+    fun handleInput(currentPosition: Pair<Int, Int>?, previousPosition: Pair<Int, Int>?): Boolean {
+        if (isAiThinking) return false
 
         var lastSelection = 0
         if (previousPosition != null) {
@@ -42,11 +42,20 @@ class Presenter(private val view: ChessboardInterface) {
         val pieceSign = if (pieceNum > 0) 1 else if (pieceNum < 0) -1 else 0
         val lastSelectionSign = if (lastSelection > 0) 1 else if (lastSelection < 0) -1 else 0
 
-        when {
-            (pieceSign == currentPlayerNum) -> selectPieceToMove(pieceNum, currentPlayerNum)
+        return when {
+            (pieceSign == currentPlayerNum) -> {
+                selectPieceToMove(pieceNum, currentPlayerNum)
+                true
+            }
             (lastAvailableMoves.contains(currentPosition)
-                    && lastSelectionSign == currentPlayerNum) -> attemptMove(previousPosition!!, currentPosition)
-            else -> view.clearSelection()
+                    && lastSelectionSign == currentPlayerNum) -> {
+                attemptMove(previousPosition!!, currentPosition)
+                false // Finished move, reset selection
+            }
+            else -> {
+                view.clearSelection()
+                false
+            }
         }
     }
 
