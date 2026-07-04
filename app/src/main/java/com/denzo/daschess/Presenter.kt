@@ -2,35 +2,34 @@ package com.denzo.daschess
 
 import android.os.Handler
 import android.os.Looper
-import kotlin.math.sign
+import kotlin.concurrent.thread
 
 class Presenter(private val view: ChessboardInterface) {
 
     private var game = Game()
     private val chessAI = ChessAI()
 
-    // Variable of check state
-    // 0: no check
-    // 1: white has to move his king
-    // -1: black has to move his king
-    private var isCheck = 0
-
+    private var isAiThinking = false
     private var lastAvailableMoves: List<Pair<Int, Int>> = listOf()
+    private val moveHistory = mutableListOf<String>()
 
     fun cancelMove() {
+        if (isAiThinking) return
         game.cancelMove()
-        view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces)
+        view.setLastMove(game.lastMovePreviousPos, game.lastMoveCurrentPos)
+        view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
     }
 
     fun restartGame(isAiEnabled: Boolean = false) {
-        // Init new Game object with initial state of the game
+        if (isAiThinking) return
         game = Game()
         game.isAiEnabled = isAiEnabled
-        // ANd redraw pieces on the board
-        view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces)
+        view.setLastMove(null, null)
+        view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
     }
 
     fun handleInput(currentPosition: Pair<Int, Int>?, previousPosition: Pair<Int, Int>?) {
+        if (isAiThinking) return
 
         var lastSelection = 0
         if (previousPosition != null) {
@@ -40,73 +39,122 @@ class Presenter(private val view: ChessboardInterface) {
         val pieceNum = game.board[currentPosition!!.first][currentPosition.second]
         val currentPlayerNum = game.currentPlayerColor
 
-        /* Handle the logic:
-           -if chosen piece of current player's side -> tell view to select it and
-            display available moves
-           -if chosen pos is one of the available moves for previous pos and previous
-           selection is piece of current player -> make move for piece on previous pos
-           -else -> clear all selections and list of available positions */
+        val pieceSign = if (pieceNum > 0) 1 else if (pieceNum < 0) -1 else 0
+        val lastSelectionSign = if (lastSelection > 0) 1 else if (lastSelection < 0) -1 else 0
+
         when {
-            (pieceNum.sign == currentPlayerNum) -> selectPieceToMove(pieceNum, currentPlayerNum)
+            (pieceSign == currentPlayerNum) -> selectPieceToMove(pieceNum, currentPlayerNum)
             (lastAvailableMoves.contains(currentPosition)
-                    && lastSelection.sign == currentPlayerNum) -> movePiece(previousPosition!!, currentPosition)
+                    && lastSelectionSign == currentPlayerNum) -> movePiece(previousPosition!!, currentPosition)
             else -> view.clearSelection()
         }
     }
 
     private fun selectPieceToMove(pieceNum: Int, currentPlayerNum: Int) {
-        lastAvailableMoves = game.gameUtils.getAvailableMovesForPiece(pieceNum, game.players[currentPlayerNum])
+        val pseudoMoves = game.gameUtils.getAvailableMovesForPiece(pieceNum, game.players[currentPlayerNum])
+        
+        // Filter pseudo-moves to only show legal moves
+        val legalMoves = pseudoMoves.filter { movePos ->
+            val player = game.players[currentPlayerNum]!!
+            val currentPos = player.pieces[pieceNum]!!.second
+            
+            // Simulate move
+            game.gameUtils.makeMove(game.players, currentPlayerNum, game.board, currentPos, movePos, game.capturedPiecesQueue)
+            val kingPiece = player.pieces[currentPlayerNum]!!
+            val opponent = game.players[-1 * currentPlayerNum]!!
+            val inCheck = game.gameUtils.isCheck(kingPiece.second, opponent, game.board)
+            
+            // Undo move
+            game.gameUtils.cancelMove(game.players, currentPlayerNum, game.board, movePos, currentPos, game.capturedPiecesQueue)
+            
+            !inCheck
+        }
+        
+        lastAvailableMoves = legalMoves
         view.displayAvailableMoves(lastAvailableMoves)
     }
 
     private fun movePiece(piecePos: Pair<Int, Int>, movePos: Pair<Int, Int>) {
-        // If game is already finished, just display winner (done to prevent moving pieces after game finished, but before restart)
-        // else make move and display winner if there is
         if (game.isEnd != 0) {
             view.displayWinner(game.isEnd)
-        } else {
-            // Tell game to make move for current player
-            game.makeMove(piecePos, movePos)
-            // Clear available moves
-            lastAvailableMoves = listOf()
-            // Tell View to clear selection and available moves on board
-            view.clearSelection()
-            // Tell View to redraw pieces on board
-            view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces)
+            return
+        }
 
-            // If king of any player is in check- display a message
-            if (game.isCheck[-1] == true) {
-                view.displayCheck(-1)
-            }
-            if (game.isCheck[1] == true) {
-                view.displayCheck(1)
-            }
-            if (game.isEnd != 0) {
-                view.displayWinner(game.isEnd)
-            } else if (game.isAiEnabled && game.currentPlayerColor == 1) { // AI is always Black for now
-                triggerAiMove()
-            }
+        val pieceName = game.playerWhite.pieces[game.board[piecePos.first][piecePos.second]]?.first 
+            ?: game.playerBlack.pieces[game.board[piecePos.first][piecePos.second]]?.first 
+            ?: ""
+        
+        game.makeMove(piecePos, movePos)
+        
+        // Add to history
+        val moveStr = toNotation(piecePos, movePos, pieceName)
+        moveHistory.add(moveStr)
+        view.updateMoveLog(moveHistory.joinToString(" "))
+
+        lastAvailableMoves = listOf()
+        view.clearSelection()
+        view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
+        view.setLastMove(piecePos, movePos)
+
+        if (game.isCheck[-1] == true) {
+            view.displayCheck(-1)
+        } else if (game.isCheck[1] == true) {
+            view.displayCheck(1)
+        } else {
+            view.displayCheck(0) 
+        }
+
+        if (game.isEnd != 0) {
+            view.displayWinner(game.isEnd)
+        } else if (game.isAiEnabled && game.currentPlayerColor == 1) { 
+            triggerAiMove()
         }
     }
 
     private fun triggerAiMove() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            val move = chessAI.getRandomMove(game)
-            if (move != null) {
-                movePiece(move.first, move.second)
+        if (isAiThinking) return
+        isAiThinking = true
+        
+        thread {
+            // Background thread prevents UI freeze during Minimax search
+            val move = chessAI.getBestMove(game, 3)
+            
+            Handler(Looper.getMainLooper()).post {
+                isAiThinking = false
+                if (move != null) {
+                    movePiece(move.first, move.second)
+                } else {
+                    if (game.isEnd != 0) {
+                        view.displayWinner(game.isEnd)
+                    }
+                }
             }
-        }, 800) // 800ms delay to simulate thinking
+        }
     }
 
+    private fun toNotation(from: Pair<Int, Int>, to: Pair<Int, Int>, pieceName: String): String {
+        val files = arrayOf("a", "b", "c", "d", "e", "f", "g", "h")
+        val ranks = arrayOf("8", "7", "6", "5", "4", "3", "2", "1")
+        val pieceCode = when (pieceName) {
+            "King" -> "K"
+            "Queen" -> "Q"
+            "Rook" -> "R"
+            "Bishop" -> "B"
+            "Knight" -> "N"
+            else -> ""
+        }
+        return "$pieceCode${files[to.second]}${ranks[to.first]}"
+    }
 
-
-    // Interface for interaction with View(Activity)
     interface ChessboardInterface {
         fun displayAvailableMoves(movesCoordinates: List<Pair<Int, Int>>)
         fun sendInputToPresenter(currentPosition: Pair<Int, Int>?, previousPosition: Pair<Int, Int>?)
         fun clearSelection()
+        fun setLastMove(from: Pair<Int, Int>?, to: Pair<Int, Int>?)
+        fun updateMoveLog(moves: String)
         fun redrawPieces(whitePieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
-                         blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>)
+                         blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
+                         currentPlayer: Int)
         fun displayWinner(player: Int)
         fun displayCheck(player: Int)
     }
