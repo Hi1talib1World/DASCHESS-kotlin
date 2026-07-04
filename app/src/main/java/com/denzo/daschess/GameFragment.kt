@@ -117,8 +117,8 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
     ) {
         chessboard.redrawPieces(whitePieces, blackPieces)
         
-        // Reset timers if it's the very first move (start of game)
-        if (whitePieces.size == 16 && blackPieces.size == 16 && whitePieces[-1]?.second == Pair(7, 4)) {
+        // Reset timers only if move log is empty (start of game)
+        if (moveLogText.text == "Moves: ") {
             whiteTimeLeft = 600000L
             blackTimeLeft = 600000L
             updateTimerText(whiteTimerText, whiteTimeLeft)
