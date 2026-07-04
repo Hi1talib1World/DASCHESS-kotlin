@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/chess_bg_light"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <!-- Opponent Info -->
     <LinearLayout
@@ -80,14 +80,15 @@
         android:id="@+id/chessboard"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:coordinateColor="@color/chess_text_secondary"
         app:coordinateTextSize="10sp"
         app:moveHighlightColor="@color/chess_accent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/opponent_info" />
+        app:layout_constraintTop_toBottomOf="@id/opponent_info"
+        app:layout_constraintBottom_toTopOf="@id/player_info" />
 
     <!-- Player Info -->
     <LinearLayout
