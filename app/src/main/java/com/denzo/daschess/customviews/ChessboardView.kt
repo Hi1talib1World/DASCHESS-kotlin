@@ -8,7 +8,6 @@ import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.media.AudioManager
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -273,9 +272,6 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     fun setLastMove(from: Pair<Int, Int>?, to: Pair<Int, Int>?) {
         lastMoveFrom = from
         lastMoveTo = to
-        if (from != null && to != null) {
-            toneGenerator.startTone(ToneGenerator.TONE_PROP_BEEP, 100)
-        }
         invalidate()
     }
 
