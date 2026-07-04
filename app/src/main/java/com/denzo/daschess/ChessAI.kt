@@ -6,12 +6,78 @@ import kotlin.math.min
 class ChessAI {
 
     private val pieceValues = mapOf(
-        "Pawn" to 10,
-        "Knight" to 30,
-        "Bishop" to 30,
-        "Rook" to 50,
-        "Queen" to 90,
-        "King" to 900
+        "Pawn" to 100,
+        "Knight" to 320,
+        "Bishop" to 330,
+        "Rook" to 500,
+        "Queen" to 900,
+        "King" to 20000
+    )
+
+    private val pawnPST = arrayOf(
+        intArrayOf(0,  0,  0,  0,  0,  0,  0,  0),
+        intArrayOf(50, 50, 50, 50, 50, 50, 50, 50),
+        intArrayOf(10, 10, 20, 30, 30, 20, 10, 10),
+        intArrayOf(5,  5, 10, 25, 25, 10,  5,  5),
+        intArrayOf(0,  0,  0, 20, 20,  0,  0,  0),
+        intArrayOf(5, -5,-10,  0,  0,-10, -5,  5),
+        intArrayOf(5, 10, 10,-20,-20, 10, 10,  5),
+        intArrayOf(0,  0,  0,  0,  0,  0,  0,  0)
+    )
+
+    private val knightPST = arrayOf(
+        intArrayOf(-50,-40,-30,-30,-30,-30,-40,-50),
+        intArrayOf(-40,-20,  0,  0,  0,  0,-20,-40),
+        intArrayOf(-30,  0, 10, 15, 15, 10,  0,-30),
+        intArrayOf(-30,  5, 15, 20, 20, 15,  5,-30),
+        intArrayOf(-30,  0, 15, 20, 20, 15,  0,-30),
+        intArrayOf(-30,  5, 10, 15, 15, 10,  5,-30),
+        intArrayOf(-40,-20,  0,  5,  5,  0,-20,-40),
+        intArrayOf(-50,-40,-30,-30,-30,-30,-40,-50)
+    )
+
+    private val bishopPST = arrayOf(
+        intArrayOf(-20,-10,-10,-10,-10,-10,-10,-20),
+        intArrayOf(-10,  0,  0,  0,  0,  0,  0,-10),
+        intArrayOf(-10,  0,  5, 10, 10,  5,  0,-10),
+        intArrayOf(-10,  5,  5, 10, 10,  5,  5,-10),
+        intArrayOf(-10,  0, 10, 10, 10, 10,  0,-10),
+        intArrayOf(-10, 10, 10, 10, 10, 10, 10,-10),
+        intArrayOf(-10,  5,  0,  0,  0,  0,  5,-10),
+        intArrayOf(-20,-10,-10,-10,-10,-10,-10,-20)
+    )
+
+    private val rookPST = arrayOf(
+        intArrayOf(0,  0,  0,  0,  0,  0,  0,  0),
+        intArrayOf(5, 10, 10, 10, 10, 10, 10,  5),
+        intArrayOf(-5,  0,  0,  0,  0,  0,  0, -5),
+        intArrayOf(-5,  0,  0,  0,  0,  0,  0, -5),
+        intArrayOf(-5,  0,  0,  0,  0,  0,  0, -5),
+        intArrayOf(-5,  0,  0,  0,  0,  0,  0, -5),
+        intArrayOf(-5,  0,  0,  0,  0,  0,  0, -5),
+        intArrayOf(0,  0,  0,  5,  5,  0,  0,  0)
+    )
+
+    private val queenPST = arrayOf(
+        intArrayOf(-20,-10,-10, -5, -5,-10,-10,-20),
+        intArrayOf(-10,  0,  0,  0,  0,  0,  0,-10),
+        intArrayOf(-10,  0,  5,  5,  5,  5,  0,-10),
+        intArrayOf(-5,  0,  5,  5,  5,  5,  0, -5),
+        intArrayOf(0,  0,  5,  5,  5,  5,  0, -5),
+        intArrayOf(-10,  5,  5,  5,  5,  5,  0,-10),
+        intArrayOf(-10,  0,  5,  0,  0,  0,  0,-10),
+        intArrayOf(-20,-10,-10, -5, -5,-10,-10,-20)
+    )
+
+    private val kingPST = arrayOf(
+        intArrayOf(-30,-40,-40,-50,-50,-40,-40,-30),
+        intArrayOf(-30,-40,-40,-50,-50,-40,-40,-30),
+        intArrayOf(-30,-40,-40,-50,-50,-40,-40,-30),
+        intArrayOf(-30,-40,-40,-50,-50,-40,-40,-30),
+        intArrayOf(-20,-30,-30,-40,-40,-30,-30,-20),
+        intArrayOf(-10,-20,-20,-20,-20,-20,-20,-10),
+        intArrayOf(20, 20,  0,  0,  0,  0, 20, 20),
+        intArrayOf(20, 30, 10,  0,  0, 10, 30, 20)
     )
 
     fun getBestMove(game: Game, depth: Int): Pair<Pair<Int, Int>, Pair<Int, Int>>? {
@@ -27,7 +93,13 @@ class ChessAI {
         val legalMoves = getAllLegalMoves(game, color)
         if (legalMoves.isEmpty()) return null
 
-        for (move in legalMoves) {
+        // Sort moves: simple heuristic, prioritize captures
+        val sortedMoves = legalMoves.sortedByDescending { move ->
+            val target = game.board[move.second.first][move.second.second]
+            if (target != 0) Math.abs(target) else 0
+        }
+
+        for (move in sortedMoves) {
             game.gameUtils.makeMove(game.players, color, game.board, move.first, move.second, game.capturedPiecesQueue)
             val score = minimax(game, depth - 1, Int.MIN_VALUE, Int.MAX_VALUE, !isMaximizing, move.second, move.first, game.board[move.second.first][move.second.second])
             game.gameUtils.cancelMove(game.players, color, game.board, move.second, move.first, game.capturedPiecesQueue)
@@ -63,7 +135,7 @@ class ChessAI {
             val opponent = game.players[-1 * color]!!
             val kingPiece = player.pieces[color] ?: return 0
             if (game.gameUtils.isCheck(kingPiece.second, opponent, game.board)) {
-                return if (isMaximizing) -10000 else 10000 
+                return if (isMaximizing) -30000 + (3 - depth) else 30000 - (3 - depth) 
             }
             return 0 
         }
@@ -104,8 +176,30 @@ class ChessAI {
         var score = 0
         for (player in game.players.values) {
             for (piece in player.pieces.values) {
-                val value = pieceValues[piece.first] ?: 0
-                score += value * player.color
+                val name = piece.first
+                val pos = piece.second
+                val baseValue = pieceValues[name] ?: 0
+                
+                // Position bonus
+                val pst = when (name) {
+                    "Pawn" -> pawnPST
+                    "Knight" -> knightPST
+                    "Bishop" -> bishopPST
+                    "Rook" -> rookPST
+                    "Queen" -> queenPST
+                    "King" -> kingPST
+                    else -> null
+                }
+                
+                var bonus = 0
+                if (pst != null) {
+                    // Flip PST for white (color -1)
+                    val r = if (player.color == -1) 7 - pos.first else pos.first
+                    val c = pos.second
+                    bonus = pst[r][c]
+                }
+                
+                score += (baseValue + bonus) * player.color
             }
         }
         return score
