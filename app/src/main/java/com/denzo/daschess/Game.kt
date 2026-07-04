@@ -3,27 +3,21 @@ package com.denzo.daschess
 import kotlin.math.abs
 
 class Game {
-    /*
-    * Class that implements the game itself, stores it's instances of game objects,
-    * keeps track of current player and winning state
-    */
-
     val gameUtils = GameUtils()
     private val chessObjects = gameUtils.initGame()
     val capturedPiecesQueue: capturedQueue = mutableListOf()
 
-    val playerBlack = chessObjects.first
-    val playerWhite = chessObjects.second
-    val board = chessObjects.third
+    var playerBlack = chessObjects.first
+    var playerWhite = chessObjects.second
+    var board = chessObjects.third
 
-    val players: Map<Int, Player> = mapOf(-1 to playerWhite, 1 to playerBlack)
+    var players: Map<Int, Player> = mapOf(-1 to playerWhite, 1 to playerBlack)
 
     var isEnd = 0
     val isCheck = mutableMapOf<Int, Boolean>(-1 to false, 1 to false)
-    var currentPlayerColor = -1  // first turn is white's turn
+    var currentPlayerColor = -1
     var isAiEnabled = false
 
-    // Variables to store values of positions of the last move to implement Cancellation of that move
     var lastMoveCurrentPos: Pair<Int, Int>? = null
     var lastMovePreviousPos: Pair<Int, Int>? = null
     var lastMovedPieceNum: Int = 0
@@ -32,20 +26,39 @@ class Game {
         gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
     }
 
+    fun copy(): Game {
+        val newGame = Game()
+        newGame.currentPlayerColor = currentPlayerColor
+        newGame.isAiEnabled = isAiEnabled
+        newGame.isEnd = isEnd
+        newGame.lastMoveCurrentPos = lastMoveCurrentPos
+        newGame.lastMovePreviousPos = lastMovePreviousPos
+        newGame.lastMovedPieceNum = lastMovedPieceNum
+        
+        newGame.isCheck.clear()
+        newGame.isCheck.putAll(isCheck)
+        
+        newGame.capturedPiecesQueue.clear()
+        newGame.capturedPiecesQueue.addAll(capturedPiecesQueue)
+        
+        newGame.playerWhite = playerWhite.copy()
+        newGame.playerBlack = playerBlack.copy()
+        newGame.players = mapOf(-1 to newGame.playerWhite, 1 to newGame.playerBlack)
+        
+        for (i in 0..7) {
+            for (j in 0..7) {
+                newGame.board[i][j] = board[i][j]
+            }
+        }
+        return newGame
+    }
+
     fun cancelMove() {
         if (lastMovePreviousPos != null && lastMoveCurrentPos != null) {
-            // Change player back
             currentPlayerColor *= -1
-            gameUtils.cancelMove(players,
-                currentPlayerColor,
-                board,
-                lastMoveCurrentPos!!,
-                lastMovePreviousPos!!,
-                capturedPiecesQueue)
-
+            gameUtils.cancelMove(players, currentPlayerColor, board, lastMoveCurrentPos!!, lastMovePreviousPos!!, capturedPiecesQueue)
             gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
             isEnd = gameUtils.checkEnd(players, board, capturedPiecesQueue)
-            // reset these variables to not be able cancel move if it's invalid
             lastMoveCurrentPos = null
             lastMovePreviousPos = null
             lastMovedPieceNum = 0
@@ -58,43 +71,30 @@ class Game {
         val pieceNum = board[piecePos.first][piecePos.second]
         val pieceName = player.pieces[pieceNum]?.first
 
-        // Basic Check: Cannot castle while in check
         if (pieceName == "King" && abs(piecePos.second - movePos.second) == 2) {
-            if (gameUtils.isCheck(piecePos, opponent, board)) {
-                return // Invalid move: cannot castle while in check
-            }
-            // Cannot castle through a square under attack
+            if (gameUtils.isCheck(piecePos, opponent, board)) return
             val passedCol = if (movePos.second == 6) 5 else 3
-            if (gameUtils.isCheck(Pair(piecePos.first, passedCol), opponent, board)) {
-                return // Invalid move: cannot castle through attack
-            }
+            if (gameUtils.isCheck(Pair(piecePos.first, passedCol), opponent, board)) return
         }
 
         gameUtils.makeMove(players, currentPlayerColor, board, piecePos, movePos, capturedPiecesQueue, promotionChoice)
         
-        // Update last move info BEFORE updating available moves
         lastMovedPieceNum = pieceNum
         lastMovePreviousPos = piecePos
         lastMoveCurrentPos = movePos
 
         gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
 
-        // Check if check for both players
         isCheck[currentPlayerColor] = gameUtils.isCheck(players[currentPlayerColor]!!.pieces[currentPlayerColor]!!.second, players[-1*currentPlayerColor] as Player, board)
         isCheck[-1*currentPlayerColor] = gameUtils.isCheck(players[-1*currentPlayerColor]!!.pieces[-1*currentPlayerColor]!!.second, players[currentPlayerColor] as Player, board)
 
-        // Check if player made invalid move and open his king for opponent's attack
         if (isCheck[currentPlayerColor] == true) {
             gameUtils.cancelMove(players, currentPlayerColor, board, movePos, piecePos, capturedPiecesQueue)
             gameUtils.updateAllAvailableMoves(players, board, lastMoveCurrentPos, lastMovePreviousPos, lastMovedPieceNum)
-        }
-        else {
-            // And assign them only in case if move is valid
+        } else {
             lastMoveCurrentPos = movePos
             lastMovePreviousPos = piecePos
-            // Change current player to opponent
             currentPlayerColor *= -1
-            // Update winning state
             isEnd = gameUtils.checkEnd(players, board, capturedPiecesQueue)
         }
     }
