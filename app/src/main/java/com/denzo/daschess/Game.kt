@@ -52,7 +52,7 @@ class Game {
         }
     }
 
-    fun makeMove(piecePos: Pair<Int, Int>, movePos: Pair<Int, Int>) {
+    fun makeMove(piecePos: Pair<Int, Int>, movePos: Pair<Int, Int>, promotionChoice: String = "Queen") {
         val player = players[currentPlayerColor]!!
         val opponent = players[-1 * currentPlayerColor]!!
         val pieceNum = board[piecePos.first][piecePos.second]
@@ -70,7 +70,7 @@ class Game {
             }
         }
 
-        gameUtils.makeMove(players, currentPlayerColor, board, piecePos, movePos, capturedPiecesQueue)
+        gameUtils.makeMove(players, currentPlayerColor, board, piecePos, movePos, capturedPiecesQueue, promotionChoice)
         
         // Update last move info BEFORE updating available moves
         lastMovedPieceNum = pieceNum
