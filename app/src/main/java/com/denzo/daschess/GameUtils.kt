@@ -91,7 +91,7 @@ class GameUtils {
 
         // Update position info of piece in player's map
         player.pieces[pieceNum] = Pair(pieceName, movePos)
-        player.movedPieces.add(pieceNum)
+        player.pieceMoveCounts[pieceNum] = (player.pieceMoveCounts[pieceNum] ?: 0) + 1
 
         // Pawn Promotion
         if (pieceName == "Pawn" && (movePos.first == 0 || movePos.first == 7)) {
