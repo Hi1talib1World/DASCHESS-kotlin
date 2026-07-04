@@ -20,8 +20,8 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
     
     private var whiteTimer: CountDownTimer? = null
     private var blackTimer: CountDownTimer? = null
-    private var whiteTimeLeft = 600000L // 10 mins
-    private var blackTimeLeft = 600000L
+    private var whiteTimeLeft = 3600000L // 60 mins for testing
+    private var blackTimeLeft = 3600000L
     
     private lateinit var whiteTimerText: TextView
     private lateinit var blackTimerText: TextView
