@@ -1,7 +1,6 @@
 package com.denzo.daschess
 
 import kotlin.math.abs
-import kotlin.math.sign
 
 class GameUtils {
 
@@ -46,7 +45,8 @@ class GameUtils {
         board: Array<IntArray>,
         currentPos: Pair<Int, Int>,
         movePos: Pair<Int, Int>,
-        capturedPiecesQueue: capturedQueue
+        capturedPiecesQueue: capturedQueue,
+        promotionChoice: String = "Queen"
     ): Unit {
         val player = players[currentPlayer] ?: return
         val otherPlayer = players[currentPlayer * -1] ?: return
@@ -95,7 +95,7 @@ class GameUtils {
 
         // Pawn Promotion
         if (pieceName == "Pawn" && (movePos.first == 0 || movePos.first == 7)) {
-            promotePawn(player, board, movePos, pieceNum)
+            promotePawn(player, board, movePos, pieceNum, promotionChoice)
         }
 
         // En Passant Capture Logic
@@ -117,11 +117,8 @@ class GameUtils {
         }
     }
 
-    private fun promotePawn(player: Player, board: Array<IntArray>, pos: Pair<Int, Int>, pawnNum: Int) {
-        // Automatically promote to Queen for now
-        val promotedPieceName = "Queen"
-        // Update the piece map with the new name but keep the same piece number
-        player.pieces[pawnNum] = Pair(promotedPieceName, pos)
+    private fun promotePawn(player: Player, board: Array<IntArray>, pos: Pair<Int, Int>, pawnNum: Int, choice: String) {
+        player.pieces[pawnNum] = Pair(choice, pos)
     }
 
     fun cancelMove(
@@ -188,7 +185,10 @@ class GameUtils {
         player.pieces[pieceNum] = Pair(pieceName, previousPos)
 
         // Revert Promotion if necessary
-        if (pieceName == "Queen" && (previousPos.first == 1 || previousPos.first == 6) && (currentPos.first == 0 || currentPos.first == 7)) {
+        // Heuristic: if a major piece is back at row 1 or 6 where a pawn starts, and it was a result of promotion
+        // This is tricky. In a real engine, you'd store the piece type before promotion.
+        // For simplicity, let's assume if it's not a pawn and it's on a promotion square moving back, it was a pawn.
+        if (pieceName != "Pawn" && (previousPos.first == 1 || previousPos.first == 6) && (currentPos.first == 0 || currentPos.first == 7)) {
             player.pieces[pieceNum] = Pair("Pawn", previousPos)
         }
 
