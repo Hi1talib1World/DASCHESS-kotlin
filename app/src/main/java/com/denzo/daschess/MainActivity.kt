@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startNewGame(isAiEnabled: Boolean = false) {
+        android.widget.Toast.makeText(this, "Starting Game...", android.widget.Toast.LENGTH_SHORT).show()
         // For now, let's load GameFragment into the container
         val fragment = GameFragment()
         val args = Bundle()
