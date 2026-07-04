@@ -35,7 +35,6 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
 
     // Delta between each square
     private var delta: Int = 0
-    private val toneGenerator = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)
 
     // Vars to determine bounds of squares needed to draw
     private var selectedSquareBounds: Rect = Rect(0, 0, 0, 0)
