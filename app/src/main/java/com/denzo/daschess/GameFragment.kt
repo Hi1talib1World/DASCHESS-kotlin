@@ -75,7 +75,7 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
     }
 
     override fun onMoveAttempted(fromRow: Int, fromCol: Int, toRow: Int, toCol: Int) {
-        presenter.handleInput(Pair(toRow, col), Pair(fromRow, fromCol))
+        presenter.handleInput(Pair(toRow, toCol), Pair(fromRow, fromCol))
         firstSquare = null
     }
 
