@@ -66,8 +66,10 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
 
     override fun onSquareSelected(row: Int, col: Int) {
         if (firstSquare == null) {
-            firstSquare = Pair(row, col)
-            presenter.handleInput(Pair(row, col), null)
+            val selected = presenter.handleInput(Pair(row, col), null)
+            if (selected) {
+                firstSquare = Pair(row, col)
+            }
         } else {
             presenter.handleInput(Pair(row, col), firstSquare)
             firstSquare = null
