@@ -16,6 +16,8 @@ class Presenter(private val view: ChessboardInterface) {
     fun cancelMove() {
         if (isAiThinking) return
         game.cancelMove()
+        lastAvailableMoves = listOf()
+        view.clearSelection()
         view.setLastMove(game.lastMovePreviousPos, game.lastMoveCurrentPos)
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
     }
