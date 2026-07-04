@@ -71,7 +71,7 @@ class GameUtils {
 
                 // Update Rook in player's pieces
                 player.pieces[rookNum] = Pair(rookName, Pair(currentPos.first, rookNewCol))
-                player.movedPieces.add(rookNum)
+                player.pieceMoveCounts[rookNum] = (player.pieceMoveCounts[rookNum] ?: 0) + 1
             }
         }
 
@@ -150,7 +150,7 @@ class GameUtils {
 
                 // Update Rook in player's pieces
                 player.pieces[rookNum] = Pair(rookName, Pair(currentPos.first, rookCol))
-                player.movedPieces.remove(rookNum)
+                player.pieceMoveCounts[rookNum] = (player.pieceMoveCounts[rookNum] ?: 1) - 1
             }
         }
 
@@ -183,16 +183,12 @@ class GameUtils {
 
         // Update piece position in Player's object
         player.pieces[pieceNum] = Pair(pieceName, previousPos)
+        player.pieceMoveCounts[pieceNum] = (player.pieceMoveCounts[pieceNum] ?: 1) - 1
 
         // Revert Promotion if necessary
-        // Heuristic: if a major piece is back at row 1 or 6 where a pawn starts, and it was a result of promotion
-        // This is tricky. In a real engine, you'd store the piece type before promotion.
-        // For simplicity, let's assume if it's not a pawn and it's on a promotion square moving back, it was a pawn.
         if (pieceName != "Pawn" && (previousPos.first == 1 || previousPos.first == 6) && (currentPos.first == 0 || currentPos.first == 7)) {
             player.pieces[pieceNum] = Pair("Pawn", previousPos)
         }
-
-        player.movedPieces.remove(pieceNum) 
     }
 
     fun isCheck(kingPos: Pair<Int, Int>, attacker: Player, board: Array<IntArray>): Boolean {
