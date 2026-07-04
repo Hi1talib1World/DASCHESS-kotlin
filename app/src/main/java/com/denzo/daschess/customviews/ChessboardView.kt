@@ -9,7 +9,6 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
-import android.media.ToneGenerator
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
