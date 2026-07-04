@@ -16,21 +16,25 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+            
             when (item.itemId) {
                 R.id.nav_play -> {
-                    loadFragment(HomeFragment())
+                    if (currentFragment !is HomeFragment && currentFragment !is GameFragment) {
+                        loadFragment(HomeFragment())
+                    }
                     true
                 }
                 R.id.nav_history -> {
-                    loadFragment(HistoryFragment())
+                    if (currentFragment !is HistoryFragment) loadFragment(HistoryFragment())
                     true
                 }
                 R.id.nav_puzzles -> {
-                    loadFragment(PuzzlesFragment())
+                    if (currentFragment !is PuzzlesFragment) loadFragment(PuzzlesFragment())
                     true
                 }
                 R.id.nav_profile -> {
-                    loadFragment(ProfileFragment())
+                    if (currentFragment !is ProfileFragment) loadFragment(ProfileFragment())
                     true
                 }
                 else -> false
