@@ -49,7 +49,9 @@ class HistoryFragment : Fragment() {
 
     private fun setupRecyclerView(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_history_matches)
-        matchesAdapter = MatchesAdapter(emptyList())
+        matchesAdapter = MatchesAdapter(emptyList()) { match ->
+            Toast.makeText(context, "Analyzing match vs ${match.opponentName}", Toast.LENGTH_SHORT).show()
+        }
         recyclerView.adapter = matchesAdapter
     }
     
