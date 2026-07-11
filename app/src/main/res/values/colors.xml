@@ -10,8 +10,8 @@
 
 
     <color name="black_light">#212121</color>
-    <color name="brightSquare">#E7E4DF</color>
-    <color name="darkSquare">#101723</color>
+    <color name="brightSquare">#EEEED2</color>
+    <color name="darkSquare">#769656</color>
     <color name="selectionColor">#FE4755</color>
     <color name="material_amber_100">#FFECB3</color>
     <color name="material_amber_200">#FFE082</color>
