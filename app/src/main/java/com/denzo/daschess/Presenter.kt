@@ -18,6 +18,7 @@ class Presenter(private val view: ChessboardInterface) {
         game.cancelMove()
         lastAvailableMoves = listOf()
         view.clearSelection()
+        updateCapturedVisuals()
         view.setLastMove(game.lastMovePreviousPos, game.lastMoveCurrentPos)
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
     }
@@ -140,6 +141,7 @@ class Presenter(private val view: ChessboardInterface) {
         view.clearSelection()
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
         view.setLastMove(piecePos, movePos)
+        updateCapturedVisuals()
 
         if (game.isCheck[-1] == true) {
             view.displayCheck(-1)
@@ -178,6 +180,24 @@ class Presenter(private val view: ChessboardInterface) {
         }
     }
 
+    private fun updateCapturedVisuals() {
+        val capturedByWhite = game.capturedPiecesQueue.filter { it.first > 0 }.map { getPieceSymbol(it.second) }
+        val capturedByBlack = game.capturedPiecesQueue.filter { it.first < 0 }.map { getPieceSymbol(it.second) }
+        
+        view.updateCapturedPieces(capturedByWhite.joinToString(""), capturedByBlack.joinToString(""))
+    }
+
+    private fun getPieceSymbol(name: String): String {
+        return when (name) {
+            "Pawn" -> "p"
+            "Knight" -> "n"
+            "Bishop" -> "b"
+            "Rook" -> "r"
+            "Queen" -> "q"
+            else -> ""
+        }
+    }
+
     private fun toNotation(from: Pair<Int, Int>, to: Pair<Int, Int>, pieceName: String, isCapture: Boolean): String {
         val files = arrayOf("a", "b", "c", "d", "e", "f", "g", "h")
         val ranks = arrayOf("8", "7", "6", "5", "4", "3", "2", "1")
@@ -205,6 +225,7 @@ class Presenter(private val view: ChessboardInterface) {
         fun clearSelection()
         fun setLastMove(from: Pair<Int, Int>?, to: Pair<Int, Int>?)
         fun updateMoveLog(moves: String)
+        fun updateCapturedPieces(whiteCaptured: String, blackCaptured: String)
         fun setAiThinking(isThinking: Boolean)
         fun displayIllegalMove(message: String)
         fun showPromotionDialog(callback: (String) -> Unit)
