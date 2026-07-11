@@ -104,7 +104,8 @@ class ChessAI {
 
         for (move in sortedMoves) {
             simulationGame.gameUtils.makeMove(simulationGame.players, color, simulationGame.board, move.first, move.second, simulationGame.capturedPiecesQueue)
-            val score = minimax(simulationGame, depth - 1, Int.MIN_VALUE, Int.MAX_VALUE, !isMaximizing, move.second, move.first, simulationGame.board[move.second.first][move.second.second])
+            val lastPiece = simulationGame.board[move.second.first][move.second.second]
+            val score = minimax(simulationGame, depth - 1, Int.MIN_VALUE, Int.MAX_VALUE, !isMaximizing, move.second, move.first, lastPiece)
             simulationGame.gameUtils.cancelMove(simulationGame.players, color, simulationGame.board, move.second, move.first, simulationGame.capturedPiecesQueue)
             
             if (isMaximizing) {
