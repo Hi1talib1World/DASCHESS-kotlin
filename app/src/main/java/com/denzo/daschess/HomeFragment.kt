@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.denzo.daschess.data.ChessRepository
+import com.denzo.daschess.models.ChessPuzzle
 import com.denzo.daschess.models.MatchHistoryItem
 import com.denzo.daschess.models.UserStats
 
@@ -48,7 +49,9 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView(view: View) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_recent_matches)
-        matchesAdapter = MatchesAdapter(emptyList())
+        matchesAdapter = MatchesAdapter(emptyList()) { match ->
+            Toast.makeText(context, "Reviewing match vs ${match.opponentName}", Toast.LENGTH_SHORT).show()
+        }
         recyclerView.adapter = matchesAdapter
     }
 
@@ -59,6 +62,10 @@ class HomeFragment : Fragment() {
 
         viewModel.recentMatches.observe(viewLifecycleOwner, Observer { matches ->
             updateMatchesUI(matches)
+        })
+
+        viewModel.dailyPuzzle.observe(viewLifecycleOwner, Observer { puzzle ->
+            updatePuzzleUI(view, puzzle)
         })
 
         viewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
@@ -72,8 +79,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupClickListeners(view: View) {
-        view.findViewById<Button>(R.id.btn_new_game).setOnClickListener {
-            it.isEnabled = false // Micro-feedback: prevent double clicks
+        val btnNewGame = view.findViewById<Button>(R.id.btn_new_game)
+        btnNewGame.setOnClickListener {
             (activity as? MainActivity)?.startNewGame()
         }
 
@@ -82,14 +89,25 @@ class HomeFragment : Fragment() {
         }
         
         view.findViewById<Button>(R.id.btn_solve_now).setOnClickListener {
-            Toast.makeText(context, "Loading Puzzle...", Toast.LENGTH_SHORT).show()
+            (activity as? MainActivity)?.navigateToPuzzles()
+        }
+
+        view.findViewById<TextView>(R.id.tv_view_all_matches).setOnClickListener {
+            (activity as? MainActivity)?.navigateToHistory()
         }
     }
 
     private fun updateUserStatsUI(view: View, stats: UserStats) {
-        view.findViewById<TextView>(R.id.welcome_text).text = "Welcome back, ${stats.name}."
+        val name = if (UserSession.isGuest) "Guest" else UserSession.userName
+        view.findViewById<TextView>(R.id.welcome_text).text = "Welcome back, $name."
         view.findViewById<TextView>(R.id.rating_value).text = stats.rapidRating.toString()
         view.findViewById<TextView>(R.id.rank_value).text = "#${stats.globalRank}"
+        view.findViewById<TextView>(R.id.user_title_badge).text = "${stats.title.uppercase()} STATUS"
+    }
+
+    private fun updatePuzzleUI(view: View, puzzle: ChessPuzzle) {
+        view.findViewById<TextView>(R.id.puzzle_difficulty).text = puzzle.difficulty.uppercase()
+        view.findViewById<TextView>(R.id.puzzle_description).text = puzzle.description
     }
 
     private fun updateMatchesUI(matches: List<MatchHistoryItem>) {
