@@ -135,13 +135,12 @@ class Presenter(private val view: ChessboardInterface) {
         
         moveHistory.add(moveStr)
         view.updateMoveLog(moveHistory.joinToString(" "))
-        // ...
 
         lastAvailableMoves = listOf()
         view.clearSelection()
+        updateCapturedVisuals()
         view.redrawPieces(game.playerWhite.pieces, game.playerBlack.pieces, game.currentPlayerColor)
         view.setLastMove(piecePos, movePos)
-        updateCapturedVisuals()
 
         if (game.isCheck[-1] == true) {
             view.displayCheck(-1)
@@ -152,6 +151,11 @@ class Presenter(private val view: ChessboardInterface) {
         }
 
         if (game.isEnd != 0) {
+            // Update ELO (Simple mock logic)
+            if (!UserSession.isGuest) {
+                if (game.isEnd == -1) UserSession.lastEloChange = 15
+                else if (game.isEnd == 1) UserSession.lastEloChange = -15
+            }
             view.displayWinner(game.isEnd)
         } else if (game.isAiEnabled && game.currentPlayerColor == 1) { 
             triggerAiMove()
