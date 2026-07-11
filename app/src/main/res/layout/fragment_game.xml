@@ -43,6 +43,16 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_ai_thinking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Thinking..."
+                    android:textColor="@color/chess_accent"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -60,6 +70,14 @@
                 android:text="ELO: 2840"
                 android:textColor="@color/chess_text_secondary"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/opponent_captured"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/chess_text_secondary"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <TextView
@@ -75,20 +93,26 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Chessboard -->
-    <com.denzo.daschess.customviews.ChessboardView
-        android:id="@+id/chessboard"
+    <!-- Chessboard Container -->
+    <FrameLayout
+        android:id="@+id/chessboard_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:coordinateColor="@color/chess_text_secondary"
-        app:coordinateTextSize="10sp"
-        app:moveHighlightColor="@color/chess_accent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/opponent_info"
-        app:layout_constraintBottom_toTopOf="@id/player_info" />
+        app:layout_constraintBottom_toTopOf="@id/player_info">
+
+        <com.denzo.daschess.customviews.ChessboardView
+            android:id="@+id/chessboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:coordinateColor="@color/chess_text_secondary"
+            app:coordinateTextSize="12sp"
+            app:moveHighlightColor="@color/chess_accent" />
+    </FrameLayout>
 
     <!-- Player Info -->
     <LinearLayout
@@ -98,7 +122,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/chessboard">
+        app:layout_constraintTop_toBottomOf="@id/chessboard_container">
 
         <ImageView
             android:id="@+id/player_avatar"
@@ -129,6 +153,14 @@
                 android:text="ELO: 2150"
                 android:textColor="@color/chess_text_secondary"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/player_captured"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/chess_text_secondary"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <TextView
