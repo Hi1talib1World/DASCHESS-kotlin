@@ -20,6 +20,7 @@
             android:padding="16dp">
 
             <TextView
+                android:id="@+id/user_title_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_status"
@@ -192,6 +193,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/puzzle_difficulty"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
@@ -204,6 +206,7 @@
                     </RelativeLayout>
 
                     <TextView
+                        android:id="@+id/puzzle_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -243,6 +246,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_view_all_matches"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
