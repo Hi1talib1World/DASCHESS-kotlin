@@ -82,7 +82,20 @@ class Presenter(private val view: ChessboardInterface) {
     private fun attemptMove(piecePos: Pair<Int, Int>, movePos: Pair<Int, Int>) {
         val pieceNum = game.board[piecePos.first][piecePos.second]
         val player = game.players[game.currentPlayerColor]!!
+        val opponent = game.players[-1 * game.currentPlayerColor]!!
         val pieceName = player.pieces[pieceNum]?.first ?: ""
+
+        // Check if move is legal (doesn't leave king in check)
+        game.gameUtils.makeMove(game.players, game.currentPlayerColor, game.board, piecePos, movePos, game.capturedPiecesQueue)
+        val kingPiece = player.pieces[game.currentPlayerColor]!!
+        val inCheck = game.gameUtils.isCheck(kingPiece.second, opponent, game.board)
+        game.gameUtils.cancelMove(game.players, game.currentPlayerColor, game.board, movePos, piecePos, game.capturedPiecesQueue)
+
+        if (inCheck) {
+            view.displayIllegalMove("Illegal move: King in check")
+            view.clearSelection()
+            return
+        }
 
         if (pieceName == "Pawn" && (movePos.first == 0 || movePos.first == 7)) {
             view.showPromotionDialog { choice ->
@@ -100,15 +113,28 @@ class Presenter(private val view: ChessboardInterface) {
         }
 
         val pieceNum = game.board[piecePos.first][piecePos.second]
-        val pieceName = game.playerWhite.pieces[pieceNum]?.first 
-            ?: game.playerBlack.pieces[pieceNum]?.first 
-            ?: ""
+        val player = game.players[game.currentPlayerColor]!!
+        val pieceName = player.pieces[pieceNum]?.first ?: ""
+        val targetPiece = game.board[movePos.first][movePos.second]
+        val isCapture = targetPiece != 0 || (pieceName == "Pawn" && piecePos.second != movePos.second)
+
+        // Handle Castling Notation
+        val moveStr = when {
+            pieceName == "King" && movePos.second - piecePos.second == 2 -> "O-O"
+            pieceName == "King" && movePos.second - piecePos.second == -2 -> "O-O-O"
+            else -> {
+                val notation = toNotation(piecePos, movePos, pieceName, isCapture)
+                if (promotionChoice != "Queen" && pieceName == "Pawn" && (movePos.first == 0 || movePos.first == 7)) {
+                    "$notation=${promotionChoice[0]}"
+                } else notation
+            }
+        }
         
         game.makeMove(piecePos, movePos, promotionChoice)
         
-        val moveStr = toNotation(piecePos, movePos, if (promotionChoice != "Queen") promotionChoice else pieceName)
         moveHistory.add(moveStr)
         view.updateMoveLog(moveHistory.joinToString(" "))
+        // ...
 
         lastAvailableMoves = listOf()
         view.clearSelection()
@@ -133,14 +159,15 @@ class Presenter(private val view: ChessboardInterface) {
     private fun triggerAiMove() {
         if (isAiThinking) return
         isAiThinking = true
+        view.setAiThinking(true)
         
         thread {
             val move = chessAI.getBestMove(game, 3) 
             
             Handler(Looper.getMainLooper()).post {
                 isAiThinking = false
+                view.setAiThinking(false)
                 if (move != null) {
-                    // AI always promotes to Queen for now
                     completeMove(move.first, move.second)
                 } else {
                     if (game.isEnd != 0) {
@@ -151,7 +178,7 @@ class Presenter(private val view: ChessboardInterface) {
         }
     }
 
-    private fun toNotation(from: Pair<Int, Int>, to: Pair<Int, Int>, pieceName: String): String {
+    private fun toNotation(from: Pair<Int, Int>, to: Pair<Int, Int>, pieceName: String, isCapture: Boolean): String {
         val files = arrayOf("a", "b", "c", "d", "e", "f", "g", "h")
         val ranks = arrayOf("8", "7", "6", "5", "4", "3", "2", "1")
         val pieceCode = when (pieceName) {
@@ -162,7 +189,14 @@ class Presenter(private val view: ChessboardInterface) {
             "Knight" -> "N"
             else -> ""
         }
-        return "$pieceCode${files[to.second]}${ranks[to.first]}"
+        
+        return if (pieceName == "Pawn") {
+            if (isCapture) "${files[from.second]}x${files[to.second]}${ranks[to.first]}"
+            else "${files[to.second]}${ranks[to.first]}"
+        } else {
+            val capture = if (isCapture) "x" else ""
+            "$pieceCode$capture${files[to.second]}${ranks[to.first]}"
+        }
     }
 
     interface ChessboardInterface {
@@ -171,6 +205,8 @@ class Presenter(private val view: ChessboardInterface) {
         fun clearSelection()
         fun setLastMove(from: Pair<Int, Int>?, to: Pair<Int, Int>?)
         fun updateMoveLog(moves: String)
+        fun setAiThinking(isThinking: Boolean)
+        fun displayIllegalMove(message: String)
         fun showPromotionDialog(callback: (String) -> Unit)
         fun redrawPieces(whitePieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
                          blackPieces: MutableMap<Int, Pair<String, Pair<Int, Int>>>,
