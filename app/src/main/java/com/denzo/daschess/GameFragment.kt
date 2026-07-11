@@ -101,6 +101,14 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
         moveLogText.text = "Moves: $moves"
     }
 
+    override fun setAiThinking(isThinking: Boolean) {
+        view?.findViewById<View>(R.id.tv_ai_thinking)?.visibility = if (isThinking) View.VISIBLE else View.GONE
+    }
+
+    override fun displayIllegalMove(message: String) {
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
     override fun showPromotionDialog(callback: (String) -> Unit) {
         val options = arrayOf("Queen", "Rook", "Bishop", "Knight")
         MaterialAlertDialogBuilder(requireContext())
@@ -150,6 +158,15 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
             chessboard.displayCheckSquare(null)
             return
         }
+        
+        // Vibrate on check
+        val vibrator = requireContext().getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vibrator.vibrate(android.os.VibrationEffect.createOneShot(300, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(300)
+        }
+
         val pieces = if (player == -1) chessboard.whitePlayerPieces else chessboard.blackPlayerPieces
         val kingPos = pieces[player]?.second
         chessboard.displayCheckSquare(kingPos)
