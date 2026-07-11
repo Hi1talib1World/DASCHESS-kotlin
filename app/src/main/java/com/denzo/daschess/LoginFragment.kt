@@ -18,6 +18,13 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.btn_login).setOnClickListener {
+            val email = view.findViewById<android.widget.EditText>(R.id.et_email).text.toString()
+            if (email.isNotEmpty()) {
+                UserSession.userName = email.split("@")[0].replaceFirstChar { it.uppercase() }
+                UserSession.userEmail = email
+                UserSession.isGuest = false
+            }
+            
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
@@ -25,6 +32,14 @@ class LoginFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.tv_go_to_register).setOnClickListener {
             (activity as? AuthActivity)?.showRegister()
+        }
+
+        view.findViewById<TextView>(R.id.tv_skip_login).setOnClickListener {
+            UserSession.userName = "Guest"
+            UserSession.isGuest = true
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
         }
     }
 }
