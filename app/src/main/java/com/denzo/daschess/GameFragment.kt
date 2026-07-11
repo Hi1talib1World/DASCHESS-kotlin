@@ -101,6 +101,11 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
         moveLogText.text = "Moves: $moves"
     }
 
+    override fun updateCapturedPieces(whiteCaptured: String, blackCaptured: String) {
+        view?.findViewById<TextView>(R.id.player_captured)?.text = whiteCaptured
+        view?.findViewById<TextView>(R.id.opponent_captured)?.text = blackCaptured
+    }
+
     override fun setAiThinking(isThinking: Boolean) {
         view?.findViewById<View>(R.id.tv_ai_thinking)?.visibility = if (isThinking) View.VISIBLE else View.GONE
     }
