@@ -32,4 +32,317 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
+    <!-- Full Screen Navigation Menu -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/full_screen_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1B1917"
+        android:elevation="20dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/btn_close_menu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/menu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="MENU"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menu_title">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:columnCount="2">
+
+                <!-- 1. Collections -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_collections"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#E3A857">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_agenda" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Collections" />
+                            <TextView style="@style/MenuDescStyle" android:text="Save games in collections for further study" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 2. Games Database -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_games_db"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#73503C">
+                            <ImageView style="@style/MenuIconStyle" android:src="@drawable/ic_menu_grid" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Games Database" />
+                            <TextView style="@style/MenuDescStyle" android:text="Explore millions of master chess games" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 3. Chess Terms -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_chess_terms"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#9B9B9B">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_sort_alphabetically" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Chess Terms" />
+                            <TextView style="@style/MenuDescStyle" android:text="Get familiar with the terminology of chess" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 4. Rules -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_rules"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#769656">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_info_details" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Rules" />
+                            <TextView style="@style/MenuDescStyle" android:text="Learn the rules and the basics of chess" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 5. Explore -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_explore"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#A5A5A5">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_compass" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Explore" />
+                            <TextView style="@style/MenuDescStyle" android:text="Explore moves on your own" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 6. Vote Chess -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_vote_chess"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#00A3A3">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_myplaces" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Vote Chess" />
+                            <TextView style="@style/MenuDescStyle" android:text="Vote with a team to make a move" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 7. Solo Chess -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_solo_chess"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#5C8A3E">
+                            <ImageView style="@style/MenuIconStyle" android:src="@drawable/chess_plt60" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Solo Chess" />
+                            <TextView style="@style/MenuDescStyle" android:text="Capture pieces in the right order to win" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 8. Computer Championship -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_comp_champ"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#999999">
+                            <ImageView style="@style/MenuIconStyle" android:src="@drawable/ic_nav_play" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Comp. Championship" />
+                            <TextView style="@style/MenuDescStyle" android:text="Watch chess engines battle" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 9. ChessKid -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_chesskid"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#81B64C">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/btn_star_big_on" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="ChessKid" />
+                            <TextView style="@style/MenuDescStyle" android:text="Top chess site and apps for kids" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 10. Tools -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_tools"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#939393">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_manage" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Tools" />
+                            <TextView style="@style/MenuDescStyle" android:text="Access more tools and apps for chess" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 11. Vision -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_vision"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#828282">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_view" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Vision" />
+                            <TextView style="@style/MenuDescStyle" android:text="Improve your ability to read the board" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 12. Shop -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_shop"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#F5D24B">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_call" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Shop" />
+                            <TextView style="@style/MenuDescStyle" android:text="Shop for chess sets and supplies" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 13. Merch -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_merch"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#3B4A8B">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_gallery" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Merch" />
+                            <TextView style="@style/MenuDescStyle" android:text="Chess.com merch makes you look smart" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 14. Gift -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/menu_gift"
+                    style="@style/MenuCardStyle">
+                    <LinearLayout style="@style/MenuContentStyle">
+                        <FrameLayout style="@style/MenuIconContainerStyle" android:background="#D18B47">
+                            <ImageView style="@style/MenuIconStyle" android:src="@android:drawable/ic_menu_send" />
+                        </FrameLayout>
+                        <LinearLayout style="@style/MenuTextStyle">
+                            <TextView style="@style/MenuTitleStyle" android:text="Gift" />
+                            <TextView style="@style/MenuDescStyle" android:text="Give the gift of chess" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </GridLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/matchmaking_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E6000000"
+        android:elevation="10dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:indeterminateTint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="SEARCHING FOR OPPONENT"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/matchmaking_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="ESTIMATED TIME: 0:15"
+                android:textColor="#B0B0B0"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_cancel_matchmaking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/bg_button_outline"
+                android:paddingHorizontal="32dp"
+                android:text="CANCEL"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
