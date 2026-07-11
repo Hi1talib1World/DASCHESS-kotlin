@@ -65,12 +65,17 @@ class ProfileFragment : Fragment() {
         }
 
         view.findViewById<Button>(R.id.btn_sign_out).setOnClickListener {
-            Toast.makeText(context, "Signing out...", Toast.LENGTH_SHORT).show()
+            UserSession.userName = "Guest"
+            UserSession.isGuest = true
+            val intent = android.content.Intent(requireContext(), AuthActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
         }
     }
 
     private fun updateProfileUI(view: View, stats: UserStats) {
-        view.findViewById<TextView>(R.id.profile_name).text = stats.name
+        val name = if (UserSession.isGuest) "Guest" else UserSession.userName
+        view.findViewById<TextView>(R.id.profile_name).text = name
         view.findViewById<TextView>(R.id.profile_title).text = stats.title
         view.findViewById<TextView>(R.id.stat_total_games).text = stats.totalGames.toString()
         view.findViewById<TextView>(R.id.stat_win_rate).text = "${stats.winRate}%"
