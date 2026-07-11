@@ -9,13 +9,16 @@ class ChessRepository {
 
     suspend fun getUserStats(): UserStats {
         delay(800) // Mock network delay
+        val baseRating = 2842
+        val currentRating = if (com.denzo.daschess.UserSession.isGuest) baseRating else baseRating + com.denzo.daschess.UserSession.lastEloChange
+        
         return UserStats(
-            name = "Magnus",
-            title = "GRANDMASTER",
-            rapidRating = 2842,
-            globalRank = 1,
-            winRate = 68.4,
-            totalGames = 1250,
+            name = if (com.denzo.daschess.UserSession.isGuest) "Guest" else com.denzo.daschess.UserSession.userName,
+            title = if (com.denzo.daschess.UserSession.isGuest) "NOVICE" else "GRANDMASTER",
+            rapidRating = currentRating,
+            globalRank = if (com.denzo.daschess.UserSession.isGuest) 1000000 else 1,
+            winRate = if (com.denzo.daschess.UserSession.isGuest) 0.0 else 68.4,
+            totalGames = if (com.denzo.daschess.UserSession.isGuest) 0 else 1250,
             bestWin = 2910,
             accuracy = 94.2
         )
