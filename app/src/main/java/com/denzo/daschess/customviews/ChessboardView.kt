@@ -91,7 +91,20 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     private val darkPaint = Paint(ANTI_ALIAS_FLAG).apply { color = darkColor }
     private val brightPaint = Paint(ANTI_ALIAS_FLAG).apply { color = brightColor }
     private val selectedPaint = Paint(ANTI_ALIAS_FLAG).apply { color = highlightColor; alpha = 150 }
-    private val coordinatePaint = Paint(ANTI_ALIAS_FLAG).apply { color = coordinateColor; textSize = coordinateSize; textAlign = Paint.Align.CENTER }
+    
+    private val coordinatePaintBright = Paint(ANTI_ALIAS_FLAG).apply { 
+        color = brightColor
+        textSize = coordinateSize
+        style = Paint.Style.FILL
+        isFakeBoldText = true
+    }
+    private val coordinatePaintDark = Paint(ANTI_ALIAS_FLAG).apply { 
+        color = darkColor
+        textSize = coordinateSize
+        style = Paint.Style.FILL
+        isFakeBoldText = true
+    }
+
     private val highlightCirclePaint = Paint(ANTI_ALIAS_FLAG).apply { color = highlightColor; alpha = 100 }
     private val highlightCapturePaint = Paint(ANTI_ALIAS_FLAG).apply { color = highlightColor; alpha = 120; strokeWidth = 6f; style = Paint.Style.STROKE }
     private val checkPaint = Paint(ANTI_ALIAS_FLAG).apply { color = Color.RED; alpha = 100 }
@@ -133,9 +146,18 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
     private fun drawCoordinates(canvas: Canvas) {
         val files = arrayOf("a", "b", "c", "d", "e", "f", "g", "h")
         val ranks = arrayOf("8", "7", "6", "5", "4", "3", "2", "1")
+        
+        val offset = 4f * resources.displayMetrics.density
+
         for (i in 0..7) {
-            canvas.drawText(files[i], (i * delta + delta - 12).toFloat(), (8 * delta - 8).toFloat(), coordinatePaint)
-            canvas.drawText(ranks[i], 12f, (i * delta + 24).toFloat(), coordinatePaint)
+            // Draw ranks (numbers 1-8) on the first column (file 'a')
+            val rankPaint = if (i % 2 == 0) coordinatePaintDark else coordinatePaintBright
+            canvas.drawText(ranks[i], offset, (i * delta).toFloat() + coordinateSize + offset, rankPaint)
+            
+            // Draw files (letters a-h) on the last row (rank '1')
+            val filePaint = if ((i + 7) % 2 == 0) coordinatePaintDark else coordinatePaintBright
+            val textWidth = filePaint.measureText(files[i])
+            canvas.drawText(files[i], (i + 1) * delta - textWidth - offset, (8 * delta).toFloat() - offset, filePaint)
         }
     }
 
@@ -178,8 +200,9 @@ class ChessboardView(context: Context, attrs: AttributeSet): View(context, attrs
         }
         for (piece in blackPlayerPieces.values) {
             if (isDragging && dragPiece?.second == 1 && piece.second == dragStartPos) continue
+            val rect = transformToRect(piece.second.second, piece.second.first)
             blackDrawables[piece.first]?.apply {
-                bounds = transformToRect(piece.second.second, piece.second.first)
+                bounds = rect
                 draw(canvas)
             }
         }
