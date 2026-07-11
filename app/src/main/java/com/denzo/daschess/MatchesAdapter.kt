@@ -7,7 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.denzo.daschess.models.MatchHistoryItem
 
-class MatchesAdapter(private var matches: List<MatchHistoryItem>) :
+class MatchesAdapter(
+    private var matches: List<MatchHistoryItem>,
+    private val onMatchClick: ((MatchHistoryItem) -> Unit)? = null
+) :
     RecyclerView.Adapter<MatchesAdapter.MatchViewHolder>() {
 
     class MatchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,6 +30,10 @@ class MatchesAdapter(private var matches: List<MatchHistoryItem>) :
         holder.opponentTextView.text = "${match.opponentName} ${match.opponentRating}"
         holder.detailsTextView.text = "${match.gameType} • ${match.timeControl}"
         holder.scoreTextView.text = match.result
+        
+        holder.itemView.setOnClickListener {
+            onMatchClick?.invoke(match)
+        }
     }
 
     override fun getItemCount(): Int = matches.size
