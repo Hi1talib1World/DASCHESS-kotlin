@@ -27,8 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:itemIconTint="@color/chess_primary"
-        app:itemTextColor="@color/chess_primary"
+        app:itemIconTint="@color/selector_nav"
+        app:itemTextColor="@color/selector_nav"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
