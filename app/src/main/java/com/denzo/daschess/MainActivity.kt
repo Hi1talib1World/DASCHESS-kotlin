@@ -41,26 +41,36 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
             
-            when (item.itemId) {
-                R.id.nav_play -> {
-                    if (currentFragment !is HomeFragment && currentFragment !is GameFragment) {
-                        loadFragment(HomeFragment())
-                    }
+            if (item.itemId == R.id.nav_play) {
+                if (currentFragment !is HomeFragment && currentFragment !is GameFragment) {
+                    loadFragment(HomeFragment())
                     true
+                } else {
+                    false
                 }
-                R.id.nav_history -> {
-                    if (currentFragment !is HistoryFragment) loadFragment(HistoryFragment())
+            } else if (item.itemId == R.id.nav_history) {
+                if (currentFragment !is HistoryFragment) {
+                    loadFragment(HistoryFragment())
                     true
+                } else {
+                    false
                 }
-                R.id.nav_puzzles -> {
-                    if (currentFragment !is PuzzlesFragment) loadFragment(PuzzlesFragment())
+            } else if (item.itemId == R.id.nav_puzzles) {
+                if (currentFragment !is PuzzlesFragment) {
+                    loadFragment(PuzzlesFragment())
                     true
+                } else {
+                    false
                 }
-                R.id.nav_profile -> {
-                    if (currentFragment !is ProfileFragment) loadFragment(ProfileFragment())
+            } else if (item.itemId == R.id.nav_profile) {
+                if (currentFragment !is ProfileFragment) {
+                    loadFragment(ProfileFragment())
                     true
+                } else {
+                    false
                 }
-                else -> false
+            } else {
+                false
             }
         }
 
