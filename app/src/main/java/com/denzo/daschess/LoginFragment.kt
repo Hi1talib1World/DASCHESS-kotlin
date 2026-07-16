@@ -19,6 +19,19 @@ class LoginFragment : Fragment() {
 
         view.findViewById<Button>(R.id.btn_login).setOnClickListener {
             val email = view.findViewById<android.widget.EditText>(R.id.et_email).text.toString()
+            val password = view.findViewById<android.widget.EditText>(R.id.et_password).text.toString()
+            
+            if (email.isEmpty()) {
+                android.widget.Toast.makeText(requireContext(), "Email cannot be empty", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (!email.contains("@")) {
+                android.widget.Toast.makeText(requireContext(), "Invalid email format", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            } else if (password.length < 6) {
+                android.widget.Toast.makeText(requireContext(), "Password must be at least 6 characters", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (email.isNotEmpty()) {
                 UserSession.userName = email.split("@")[0].replaceFirstChar { it.uppercase() }
                 UserSession.userEmail = email
