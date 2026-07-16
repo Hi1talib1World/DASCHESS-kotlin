@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.denzo.daschess.customviews.ChessboardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -132,6 +133,15 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
     ) {
         chessboard.redrawPieces(whitePieces, blackPieces)
         
+        // Visual turn indicator
+        if (currentPlayer == -1) {
+            view?.findViewById<View>(R.id.player_info)?.alpha = 1.0f
+            view?.findViewById<View>(R.id.opponent_info)?.alpha = 0.6f
+        } else {
+            view?.findViewById<View>(R.id.player_info)?.alpha = 0.6f
+            view?.findViewById<View>(R.id.opponent_info)?.alpha = 1.0f
+        }
+
         // Reset timers only if move log is empty (start of game)
         if (moveLogText.text == "Moves: ") {
             whiteTimeLeft = 3600000L
@@ -164,12 +174,23 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
             return
         }
         
-        // Vibrate on check
         val vibrator = requireContext().getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            vibrator.vibrate(android.os.VibrationEffect.createOneShot(300, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            vibrator.vibrate(300)
+        
+        // Pattern based on who is in check
+        if (player == -1) { // White (You)
+            // Long urgent vibration
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(500, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                vibrator.vibrate(500)
+            }
+        } else { // Black (AI)
+            // Short notification
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(100, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                vibrator.vibrate(100)
+            }
         }
 
         val pieces = if (player == -1) chessboard.whitePlayerPieces else chessboard.blackPlayerPieces
@@ -210,6 +231,26 @@ class GameFragment : Fragment(), Presenter.ChessboardInterface, ChessboardView.O
         val minutes = (millis / 1000) / 60
         val seconds = (millis / 1000) % 60
         textView.text = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+        
+        // Color feedback based on time remaining
+        if (millis < 30000) { // Less than 30 seconds
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.chess_loss))
+            if (millis < 10000 && (millis / 1000) % 2 == 0L) {
+                textView.alpha = 0.5f // Blink effect
+            } else {
+                textView.alpha = 1.0f
+            }
+        } else if (millis < 60000) { // Less than 1 minute
+            textView.setTextColor(android.graphics.Color.parseColor("#FFA500")) // Orange
+            textView.alpha = 1.0f
+        } else {
+            if (textView.id == R.id.player_timer) {
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            } else {
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.chess_primary))
+            }
+            textView.alpha = 1.0f
+        }
     }
     
     override fun onDestroyView() {
