@@ -98,8 +98,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateUserStatsUI(view: View, stats: UserStats) {
-        val name = if (UserSession.isGuest) "Guest" else UserSession.userName
-        view.findViewById<TextView>(R.id.welcome_text).text = "Welcome back, $name."
+        val name = if (UserSession.isGuest) {
+            "Guest Player"
+        } else {
+            UserSession.userName
+        }
+        
+        val welcomeText = if (stats.rapidRating > 2500) {
+            "Welcome back, Grandmaster $name."
+        } else if (stats.rapidRating > 1500) {
+            "Welcome back, $name."
+        } else {
+            "Welcome, $name. Ready to train?"
+        }
+
+        view.findViewById<TextView>(R.id.welcome_text).text = welcomeText
         view.findViewById<TextView>(R.id.rating_value).text = stats.rapidRating.toString()
         view.findViewById<TextView>(R.id.rank_value).text = "#${stats.globalRank}"
         view.findViewById<TextView>(R.id.user_title_badge).text = "${stats.title.uppercase()} STATUS"
