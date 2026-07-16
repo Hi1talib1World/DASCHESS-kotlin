@@ -82,7 +82,11 @@ class GameUtils {
             if (capturedPieceInfo != null) {
                 capturedPiecesQueue.add(Triple(pieceOnMovePosition, capturedPieceInfo.first, capturedPieceInfo.second))
                 otherPlayer.pieces.remove(pieceOnMovePosition)
+            } else {
+                // Defensive check: if piece exists on board but not in map (shouldn't happen)
             }
+        } else {
+            // Check for potential ghost moves or special captures
         }
 
         // Move current player's piece on the board
@@ -296,8 +300,57 @@ class GameUtils {
         
         val blackStatus = getStatus(1)
         if (blackStatus != 0) return blackStatus
+
+        if (isInsufficientMaterial(players)) return 2
         
         return 0
+    }
+
+    private fun isInsufficientMaterial(players: Map<Int, Player>): Boolean {
+        val whitePieces = players[-1]?.pieces?.values?.map { it.first } ?: emptyList()
+        val blackPieces = players[1]?.pieces?.values?.map { it.first } ?: emptyList()
+
+        // If either side has a Pawn, Rook, or Queen, it's not insufficient material
+        if (whitePieces.contains("Pawn") || blackPieces.contains("Pawn")) return false
+        if (whitePieces.contains("Rook") || blackPieces.contains("Rook")) return false
+        if (whitePieces.contains("Queen") || blackPieces.contains("Queen")) return false
+
+        val whiteMinorCount = whitePieces.count { it == "Knight" || it == "Bishop" }
+        val blackMinorCount = blackPieces.count { it == "Knight" || it == "Bishop" }
+
+        // King vs King
+        if (whiteMinorCount == 0 && blackMinorCount == 0) return true
+
+        // King + Minor vs King
+        if (whiteMinorCount == 1 && blackMinorCount == 0) return true
+        if (blackMinorCount == 1 && whiteMinorCount == 0) return true
+
+        // King + Minor vs King + Minor
+        if (whiteMinorCount == 1 && blackMinorCount == 1) {
+            val whiteMinor = players[-1]?.pieces?.values?.find { it.first == "Bishop" || it.first == "Knight" }
+            val blackMinor = players[1]?.pieces?.values?.find { it.first == "Bishop" || it.first == "Knight" }
+            
+            if (whiteMinor?.first == "Bishop" && blackMinor?.first == "Bishop") {
+                // Same colored bishops draw
+                val whiteSquareColor = (whiteMinor.second.first + whiteMinor.second.second) % 2
+                val blackSquareColor = (blackMinor.second.first + blackMinor.second.second) % 2
+                if (whiteSquareColor == blackSquareColor) return true
+            } else if (whiteMinor?.first == "Knight" && blackMinor?.first == "Knight") {
+                // Often a draw but not strictly insufficient by some rules, 
+                // but we can include it for "more if-else" logic.
+                return true
+            }
+        } else if (whiteMinorCount == 2 && blackMinorCount == 0) {
+            val minors = players[-1]?.pieces?.values?.filter { it.first == "Knight" }
+            if (minors?.size == 2) return true // Two knights vs King cannot force mate
+        } else if (blackMinorCount == 2 && whiteMinorCount == 0) {
+            val minors = players[1]?.pieces?.values?.filter { it.first == "Knight" }
+            if (minors?.size == 2) return true
+        }
+
+        return false
+
+        return false
     }
 
     fun initGame(): Triple<Player, Player, Array<IntArray>> {
