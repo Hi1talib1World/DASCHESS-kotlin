@@ -56,6 +56,9 @@ class Presenter(private val view: ChessboardInterface) {
                 false // Finished move, reset selection
             }
             else -> {
+                if (pieceNum != 0) {
+                    view.displayIllegalMove("It's not your turn!")
+                }
                 view.clearSelection()
                 false
             }
@@ -93,7 +96,12 @@ class Presenter(private val view: ChessboardInterface) {
         game.gameUtils.cancelMove(game.players, game.currentPlayerColor, game.board, movePos, piecePos, game.capturedPiecesQueue)
 
         if (inCheck) {
-            view.displayIllegalMove("Illegal move: King in check")
+            val message = if (game.isCheck[game.currentPlayerColor] == true) {
+                "You must move out of check!"
+            } else {
+                "Illegal move: exposes King to check!"
+            }
+            view.displayIllegalMove(message)
             view.clearSelection()
             return
         }
