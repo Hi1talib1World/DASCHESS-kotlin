@@ -93,10 +93,28 @@ class ChessAI {
         val legalMoves = getAllLegalMoves(game, color)
         if (legalMoves.isEmpty()) return null
 
-        // Sort moves: simple heuristic, prioritize captures
+        // Sort moves: advanced heuristic for Alpha-Beta efficiency
         val sortedMoves = legalMoves.sortedByDescending { move ->
-            val target = game.board[move.second.first][move.second.second]
-            if (target != 0) Math.abs(target) else 0
+            var moveScore = 0
+            val pieceNum = game.board[move.first.first][move.first.second]
+            val targetNum = game.board[move.second.first][move.second.second]
+            
+            // MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
+            if (targetNum != 0) {
+                val victimValue = pieceValues[game.playerWhite.pieces[targetNum]?.first ?: game.playerBlack.pieces[targetNum]?.first ?: ""] ?: 0
+                val attackerValue = pieceValues[game.playerWhite.pieces[pieceNum]?.first ?: game.playerBlack.pieces[pieceNum]?.first ?: ""] ?: 0
+                moveScore = 10 * victimValue - attackerValue
+            }
+            
+            // Prioritize promotions
+            if ((pieceNum == -9 || pieceNum == 9) && (move.second.first == 0 || move.second.first == 7)) {
+                moveScore += 900
+            }
+            
+            // Penalize moving pieces to squares under attack (Simplified)
+            // if (isSquareAttacked(move.second, game)) moveScore -= pieceValue
+            
+            moveScore
         }
 
         // Use a copy for search to avoid UI race conditions
@@ -197,13 +215,58 @@ class ChessAI {
                 
                 var bonus = 0
                 if (pst != null) {
-                    // Flip PST for white (color -1)
                     val r = if (player.color == -1) 7 - pos.first else pos.first
                     val c = pos.second
                     bonus = pst[r][c]
                 }
                 
-                score += (baseValue + bonus) * player.color
+                // Additional heuristics with if-else
+                var heuristicBonus = 0
+                
+                if (name == "King") {
+                    // King safety: bonus for being on back rank if many pieces exist
+                    if (game.capturedPiecesQueue.size < 10) {
+                        if (pos.first == 0 || pos.first == 7) heuristicBonus += 20
+                    }
+                } else if (name == "Pawn") {
+                    // Passed pawn detection
+                    val direction = player.color
+                    var isPassed = true
+                    
+                    var r = pos.first + direction
+                    while (r in 0..7) {
+                        if (game.board[r][pos.second] != 0 && (game.board[r][pos.second] * -direction) > 0) {
+                            isPassed = false
+                            break
+                        }
+                        r += direction
+                    }
+                    if (isPassed) heuristicBonus += 50
+                }
+                
+                // Mobility Bonus (Strategic use of if-else)
+                val pieceId = game.board[pos.first][pos.second]
+                val mobility = player.availableMoves[pieceId]?.size ?: 0
+                
+                if (game.capturedPiecesQueue.size < 15) { 
+                    // Early/Mid game: encourage piece development
+                    if (name == "Knight" || name == "Bishop") {
+                        heuristicBonus += mobility * 3
+                    } else {
+                        heuristicBonus += mobility * 1
+                    }
+                } else { 
+                    // Endgame: King activity becomes essential
+                    if (name == "King") {
+                        heuristicBonus += mobility * 10 
+                    } else if (name == "Pawn") {
+                        heuristicBonus += (7 - pos.first) * 5 // Pawn push bonus
+                    } else {
+                        heuristicBonus += mobility * 2
+                    }
+                }
+                
+                score += (baseValue + bonus + heuristicBonus) * player.color
             }
         }
         return score
